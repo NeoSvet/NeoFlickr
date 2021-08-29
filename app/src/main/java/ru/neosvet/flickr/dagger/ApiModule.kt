@@ -22,20 +22,20 @@ class ApiModule {
     @Singleton
     @Provides
     fun provideApi(@Named("url_api") baseUrl: String): Client =
-        Retrofit.Builder()
-            .baseUrl(baseUrl)
+            Retrofit.Builder()
+                    .baseUrl(baseUrl)
 //            .client(
 //                OkHttpClient.Builder()
 //                    .addInterceptor(MyInterceptor)
 //                    .build()
 //            )
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-            .create(Client::class.java)
+                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build()
+                    .create(Client::class.java)
 
     private val gson = GsonBuilder()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-       // .excludeFieldsWithoutExposeAnnotation()
-        .create()
+//            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//            .excludeFieldsWithoutExposeAnnotation()
+            .create()
 }

@@ -1,6 +1,5 @@
 package ru.neosvet.flickr.views
 
-import android.content.Intent
 import android.os.Bundle
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router

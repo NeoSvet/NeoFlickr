@@ -1,10 +1,13 @@
 package ru.neosvet.flickr.entities
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class PhotosResponse(
-    @SerializedName("photos") var photos: Photos,
-    @SerializedName("stat") var stat: String
+    @SerializedName("photos") var photos: Photos?,
+    @SerializedName("stat") var stat: String,
+    @SerializedName("message") var message: String?
 )
 
 data class Photos(
@@ -29,10 +32,11 @@ data class Photo(
     @SerializedName("has_comment") var hasComment: Int
 )
 
+@Parcelize
 data class PhotoItem(
-    var id: String,
-    var owner: String,
-    var url: String,
-    var title: String
-)
+        var id: String,
+        var owner: String,
+        var url: String,
+        var title: String
+) : Parcelable
 

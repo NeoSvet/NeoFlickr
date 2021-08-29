@@ -1,23 +1,22 @@
 package ru.neosvet.flickr.views
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.terrakok.cicerone.Router
 import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.BackEvent
-import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.databinding.FragmentGalleryBinding
 import ru.neosvet.flickr.gallery.GalleryPresenter
 import ru.neosvet.flickr.gallery.GalleryView
 import ru.neosvet.flickr.gallery.IGallerySource
+import ru.neosvet.flickr.image.PicassoImageLoader
 import ru.neosvet.flickr.list.GalleryAdapter
 import ru.neosvet.flickr.scheduler.Schedulers
-import ru.neosvet.flickr.utils.GlideImageLoader
 import javax.inject.Inject
 
 class GalleryFragment : AbsFragment(), GalleryView, BackEvent {
@@ -50,10 +49,15 @@ class GalleryFragment : AbsFragment(), GalleryView, BackEvent {
     }.root
 
     override fun init() {
-        vb?.rvGallery?.layoutManager = LinearLayoutManager(requireContext())
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            vb?.rvGallery?.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        } else {
+            vb?.rvGallery?.layoutManager = LinearLayoutManager(requireContext())
+        }
         adapter = GalleryAdapter(
             presenter = presenter.galleryListPresenter,
-            imageLoader = GlideImageLoader()
+            imageLoader = PicassoImageLoader
         )
         vb?.rvGallery?.adapter = adapter
     }
@@ -63,8 +67,14 @@ class GalleryFragment : AbsFragment(), GalleryView, BackEvent {
     }
 
     override fun showError(t: Throwable) {
+        t.printStackTrace()
         Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
     }
 
     override fun back() = presenter.back()
+
+    override fun onDestroyView() {
+        vb = null
+        super.onDestroyView()
+    }
 }

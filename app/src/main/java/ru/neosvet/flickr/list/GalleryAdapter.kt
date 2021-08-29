@@ -1,14 +1,17 @@
 package ru.neosvet.flickr.list
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import ru.neosvet.flickr.databinding.ItemGalleryBinding
 import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.gallery.IGalleryItemView
 import ru.neosvet.flickr.gallery.IGalleryListPresenter
-import ru.neosvet.flickr.utils.IImageLoader
+import ru.neosvet.flickr.image.IImageLoader
 
 class GalleryAdapter(
     private val presenter: IGalleryListPresenter,
@@ -32,12 +35,26 @@ class GalleryAdapter(
         presenter.bindView(holder.apply { pos = position })
 
     inner class ViewHolder(private val vb: ItemGalleryBinding) : RecyclerView.ViewHolder(vb.root),
-        IGalleryItemView {
+        IGalleryItemView, Target {
         override var pos = -1
 
         override fun setPhoto(item: PhotoItem) = with(vb) {
             tvTitle.text = item.title
-            imageLoader.load(item.url, ivPhoto)
+            imageLoader.loadSmall(item.url, this@ViewHolder)
+        }
+
+        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+            bitmap?.let {
+                vb.ivPhoto.setImageBitmap(it)
+            }
+        }
+
+        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+
+        }
+
+        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+
         }
     }
 }

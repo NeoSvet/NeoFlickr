@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NeoFlickr</string>
+    <string name="info">Сведения</string>
+    <string name="owner">Владелец</string>
+    <string name="date">Дата</string>
+    <string name="title">Заголовок</string>
+    <string name="description">Описание</string>
 </resources>
