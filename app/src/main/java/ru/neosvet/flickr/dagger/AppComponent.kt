@@ -16,7 +16,8 @@ import javax.inject.Singleton
     modules = [AndroidInjectionModule::class,
         ViewsModule::class,
         ApiModule::class,
-        SourceModule::class]
+        SourceModule::class,
+        UtilsModule::class]
 )
 interface AppComponent : AndroidInjector<NeoFlickr> {
 
@@ -34,12 +35,6 @@ interface AppComponent : AndroidInjector<NeoFlickr> {
 
         @BindsInstance
         fun withSchedulers(schedulers: Schedulers): Builder
-
-        /*@BindsInstance
-        fun withStorage(storage: GitHubStorage): Builder
-
-        @BindsInstance
-        fun withNetworkStatus(networkStatus: INetworkStatus): Builder*/
 
         fun build(): AppComponent
 

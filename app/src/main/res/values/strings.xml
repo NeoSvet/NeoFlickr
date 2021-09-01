@@ -5,4 +5,11 @@
     <string name="date">Дата</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
+    <string name="settings">Настройки</string>
+    <string name="show">Показывать:</string>
+    <string name="popular">Популярное</string>
+    <string name="forUser">Для пользователя (ник)</string>
+    <string name="gallery">Галерея</string>
+    <string name="link">Сссылка</string>
+    <string name="search">Поиск</string>
 </resources>

@@ -8,6 +8,7 @@ import com.squareup.picasso.Target
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
 import ru.neosvet.flickr.entities.InfoResponse
+import ru.neosvet.flickr.entities.Owner
 import ru.neosvet.flickr.entities.Size
 import ru.neosvet.flickr.entities.SizesResponse
 import ru.neosvet.flickr.image.IImageLoader
@@ -18,7 +19,6 @@ class PhotoPresenter(
     private val imageLoader: IImageLoader,
     private val titleIds: TitleIds,
     private val source: IPhotoSource,
-    private val router: Router,
     private val schedulers: Schedulers
 ) : MvpPresenter<PhotoView>(), Target {
 
@@ -41,10 +41,14 @@ class PhotoPresenter(
         process?.dispose()
     }
 
-    fun startLoad(photo_id: String) {
+    fun load(photo_id: String) {
         process = source.getSizes(photo_id)
             .observeOn(schedulers.main())
-            .subscribeOn(schedulers.background())
+            .subscribeOn(schedulers.background()).map {
+                if (it.stat.equals("fail"))
+                    throw Exception(it.message)
+                it
+            }
             .subscribe(
                 this::parseSizes,
                 viewState::showError
@@ -52,12 +56,9 @@ class PhotoPresenter(
     }
 
     private fun parseSizes(response: SizesResponse) {
-        if (response.stat.equals("fail"))
-            throw Exception(response.message)
-
         response.sizes?.size?.let {
             val url = findUrlBiggest(it)
-            imageLoader.loadUrl(url, this)
+            imageLoader.load(url, this)
         }
     }
 
@@ -65,6 +66,11 @@ class PhotoPresenter(
         process = source.getInfo(photo_id)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
+            .map {
+                if (it.stat.equals("fail"))
+                    throw Exception(it.message)
+                it
+            }
             .subscribe(
                 this::parseInfo,
                 viewState::showError
@@ -72,21 +78,24 @@ class PhotoPresenter(
     }
 
     private fun parseInfo(response: InfoResponse) {
-        if (response.stat.equals("fail"))
-            throw Exception(response.message)
-
         response.photo?.let {
             infoListPresenter.list.run {
                 clear()
-                add(Pair(titleIds.owner, it.owner.realname))
+                add(Pair(titleIds.owner, getOwnerName(it.owner)))
                 add(Pair(titleIds.date, dateToString(it.dates.posted)))
                 add(Pair(titleIds.title, it.title.content))
-                if (it.description.content.length > 0)
+                if (it.description.content.isNotEmpty())
                     add(Pair(titleIds.description, it.description.content))
             }
             viewState.updateInfo()
         }
     }
+
+    private fun getOwnerName(owner: Owner) = if (owner.realname.isNotEmpty())
+        "${owner.username} (${owner.realname})"
+    else
+        owner.username
+
 
     private fun dateToString(value: String): String {
         val date = Date(value.toLong() * 1000)
@@ -109,15 +118,12 @@ class PhotoPresenter(
     }
 
     override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-
+        e?.let {
+            viewState.showError(it)
+        }
+        viewState.setNoPhoto()
     }
 
     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-
-    }
-
-    fun back(): Boolean {
-        router.exit()
-        return true
     }
 }

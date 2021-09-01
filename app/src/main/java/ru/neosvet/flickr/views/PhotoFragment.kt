@@ -8,14 +8,11 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
-import com.github.terrakok.cicerone.Router
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import moxy.ktx.moxyPresenter
-import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
-import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.image.PicassoImageLoader
 import ru.neosvet.flickr.list.InfoAdapter
 import ru.neosvet.flickr.photo.IPhotoSource
@@ -25,24 +22,21 @@ import ru.neosvet.flickr.photo.TitleIds
 import ru.neosvet.flickr.scheduler.Schedulers
 import javax.inject.Inject
 
-class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
+class PhotoFragment : AbsFragment(), PhotoView {
     companion object {
         private const val ARG_PHOTO = "photo"
 
         @JvmStatic
-        fun newInstance(photo: PhotoItem) =
+        fun newInstance(photo_id: String) =
             PhotoFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_PHOTO, photo)
+                    putString(ARG_PHOTO, photo_id)
                 }
             }
     }
 
     @Inject
     lateinit var source: IPhotoSource
-
-    @Inject
-    lateinit var router: Router
 
     @Inject
     lateinit var schedulers: Schedulers
@@ -61,7 +55,6 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
             imageLoader = PicassoImageLoader,
             titleIds = titleIds,
             source = source,
-            router = router,
             schedulers = schedulers
         )
     }
@@ -78,16 +71,16 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         setHasOptionsMenu(true)
 
         val v = FragmentPhotoBinding.inflate(inflater, container, false)
+        v.zoomingView.setImage(ImageSource.resource(R.drawable.load_photo))
         vb = v
         bottomSheetBehavior = BottomSheetBehavior.from(v.bottomSheetContainer)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         arguments?.let {
-            val photo = it.getParcelable(ARG_PHOTO) as PhotoItem?
-            if (photo != null) {
-                photo_id = photo.id
-                presenter.startLoad(photo.id)
-                presenter.getInfo(photo.id)
+            it.getString(ARG_PHOTO)?.let { id ->
+                photo_id = id
+                presenter.load(id)
+                presenter.getInfo(id)
             }
         }
 
@@ -116,8 +109,8 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
             if (adapter == null)
                 initList()
             presenter.getInfo(it)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 
     private fun initList() {
@@ -132,6 +125,10 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         vb?.zoomingView?.setImage(ImageSource.bitmap(bitmap))
     }
 
+    override fun setNoPhoto() {
+        vb?.zoomingView?.setImage(ImageSource.resource(R.drawable.no_photo))
+    }
+
     override fun updateInfo() {
         adapter?.notifyDataSetChanged()
     }
@@ -140,7 +137,4 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         t.printStackTrace()
         Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
     }
-
-    override fun back() = presenter.back()
-
 }

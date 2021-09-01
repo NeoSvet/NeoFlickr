@@ -6,10 +6,8 @@ import javax.inject.Inject
 class GallerySource @Inject constructor(
     private val api: Client
 ) : IGallerySource {
-
-    override fun getPopular() = api.getPopular()
-
-    override fun getPhotos(gallery_id: String) = api.getPhotos(gallery_id)
-
-    override fun searchImages(query: String) = api.searchImages(query)
+    override fun getPopular(user_id: String, page: Int) = api.getPopular(user_id, page)
+    override fun getGallery(gallery_id: String, page: Int) = api.getGallery(gallery_id, page)
+    override fun searchImages(query: String, page: Int) = api.searchImages(query, page)
 }
+

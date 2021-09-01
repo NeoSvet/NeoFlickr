@@ -1,8 +1,6 @@
 package ru.neosvet.flickr.photo
 
-import io.reactivex.rxjava3.core.Single
 import ru.neosvet.flickr.api.Client
-import ru.neosvet.flickr.entities.SizesResponse
 import javax.inject.Inject
 
 class PhotoSource @Inject constructor(

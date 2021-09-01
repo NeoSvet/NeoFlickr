@@ -91,7 +91,7 @@ data class Tag (
     @SerializedName("authorname") var authorname : String,
     @SerializedName("raw") var raw : String,
     @SerializedName("_content") var content : String,
-    @SerializedName("machine_tag") var machineTag : Int
+    //@SerializedName("machine_tag") var machineTag : Int or Boolean
 )
 
 data class Tags (

@@ -6,6 +6,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 @AddToEndSingle
 interface GalleryView : MvpView {
     fun init()
-    fun updateList()
+    fun showLoading()
+    fun updateList(page: Int, pages: Int)
     fun showError(t: Throwable)
 }

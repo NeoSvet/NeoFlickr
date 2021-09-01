@@ -19,14 +19,13 @@ class NeoFlickr : DaggerApplication() {
                 withRouter(cicerone.router)
 
                 withSchedulers(DefaultSchedulers())
-                //GitHubStorage.create(applicationContext)
-                //withStorage(GitHubStorage.getInstance())
-                //withNetworkStatus(AndroidNetworkStatus(applicationContext))
             }
             .build()
 
     override fun onCreate() {
         super.onCreate()
-        RxJavaPlugins.setErrorHandler { }
+        RxJavaPlugins.setErrorHandler {
+            it.printStackTrace()
+        }
     }
 }

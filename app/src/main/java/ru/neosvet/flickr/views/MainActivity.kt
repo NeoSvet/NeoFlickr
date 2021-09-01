@@ -48,7 +48,8 @@ class MainActivity : AbsActivity(), MainView {
 
     override fun onBackPressed() {
         supportFragmentManager.fragments.forEach {
-            if (it is BackEvent && it.back()) {
+            if (it is BackEvent) {
+                it.back()
                 return
             }
         }

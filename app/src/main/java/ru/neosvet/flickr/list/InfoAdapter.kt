@@ -1,5 +1,6 @@
 package ru.neosvet.flickr.list
 
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +34,10 @@ class InfoAdapter(
 
         override fun setText(title_id: Int, value: String) = with(vb) {
             tvTitle.text = root.context.getText(title_id)
-            tvValue.text = value
+            if (value.contains("<"))
+                tvValue.text = Html.fromHtml(value)
+            else
+                tvValue.text = value
         }
     }
 }
