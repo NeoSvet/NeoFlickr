@@ -32,8 +32,8 @@ class InfoAdapter(
         IInfoItemView {
         override var pos = -1
 
-        override fun setText(title_id: Int, value: String) = with(vb) {
-            tvTitle.text = root.context.getText(title_id)
+        override fun setText(titleId: Int, value: String) = with(vb) {
+            tvTitle.text = root.context.getText(titleId)
             if (value.contains("<"))
                 tvValue.text = Html.fromHtml(value)
             else

@@ -1,5 +1,7 @@
 package ru.neosvet.flickr.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class GalleryResponse(
@@ -44,4 +46,12 @@ data class CoverPhoto(
     @SerializedName("height") var height: Int,
     @SerializedName("is_primary") var isPrimary: Int,
     @SerializedName("is_video") var isVideo: Int
+)
+
+@Entity
+data class GalleryItem(
+    @PrimaryKey val name: String,
+    val page: Int,
+    val pages: Int,
+    val photos: String
 )

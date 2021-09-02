@@ -17,8 +17,8 @@ import ru.neosvet.flickr.settings.ISettingsSource
 import ru.neosvet.flickr.settings.SettingsField
 import ru.neosvet.flickr.settings.SettingsPresenter
 import ru.neosvet.flickr.settings.SettingsView
-import ru.neosvet.flickr.utils.GalleryType
-import ru.neosvet.flickr.utils.ISettings
+import ru.neosvet.flickr.settings.GalleryType
+import ru.neosvet.flickr.settings.ISettings
 import javax.inject.Inject
 
 class SettingsFragment : AbsFragment(), SettingsView, BackEvent {

@@ -1,26 +1,19 @@
 package ru.neosvet.flickr.photo
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import com.github.terrakok.cicerone.Router
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
-import ru.neosvet.flickr.entities.InfoResponse
-import ru.neosvet.flickr.entities.Owner
-import ru.neosvet.flickr.entities.Size
-import ru.neosvet.flickr.entities.SizesResponse
-import ru.neosvet.flickr.image.IImageLoader
+import ru.neosvet.flickr.entities.InfoItem
+import ru.neosvet.flickr.image.IImageSource
+import ru.neosvet.flickr.image.ImageReceiver
 import ru.neosvet.flickr.scheduler.Schedulers
-import java.util.*
 
 class PhotoPresenter(
-    private val imageLoader: IImageLoader,
     private val titleIds: TitleIds,
-    private val source: IPhotoSource,
+    private val photo: IPhotoSource,
+    private val image: IImageSource,
     private val schedulers: Schedulers
-) : MvpPresenter<PhotoView>(), Target {
+) : MvpPresenter<PhotoView>(), ImageReceiver {
 
     class InfoListPresenter() : IInfoListPresenter {
         val list = mutableListOf<Pair<Int, String>>()
@@ -41,89 +34,48 @@ class PhotoPresenter(
         process?.dispose()
     }
 
-    fun load(photo_id: String) {
-        process = source.getSizes(photo_id)
+    fun load(photoId: String) {
+        process = photo.getUrlBig(photoId)
             .observeOn(schedulers.main())
-            .subscribeOn(schedulers.background()).map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
+            .subscribeOn(schedulers.background())
             .subscribe(
-                this::parseSizes,
+                this::loadUrl,
                 viewState::showError
             )
     }
 
-    private fun parseSizes(response: SizesResponse) {
-        response.sizes?.size?.let {
-            val url = findUrlBiggest(it)
-            imageLoader.load(url, this)
-        }
+    private fun loadUrl(url: String) {
+        image.getOuterImage(url, this)
     }
 
-    fun getInfo(photo_id: String) {
-        process = source.getInfo(photo_id)
+    fun getInfo(photoId: String) {
+        process = photo.getInfo(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
             .subscribe(
                 this::parseInfo,
                 viewState::showError
             )
     }
 
-    private fun parseInfo(response: InfoResponse) {
-        response.photo?.let {
-            infoListPresenter.list.run {
-                clear()
-                add(Pair(titleIds.owner, getOwnerName(it.owner)))
-                add(Pair(titleIds.date, dateToString(it.dates.posted)))
-                add(Pair(titleIds.title, it.title.content))
-                if (it.description.content.isNotEmpty())
-                    add(Pair(titleIds.description, it.description.content))
-            }
-            viewState.updateInfo()
+    private fun parseInfo(info: InfoItem) {
+        infoListPresenter.list.run {
+            clear()
+            add(Pair(titleIds.owner, info.owner))
+            add(Pair(titleIds.date, info.date))
+            add(Pair(titleIds.title, info.title))
+            if (info.description.isNotEmpty())
+                add(Pair(titleIds.description, info.description))
         }
+        viewState.updateInfo()
     }
 
-    private fun getOwnerName(owner: Owner) = if (owner.realname.isNotEmpty())
-        "${owner.username} (${owner.realname})"
-    else
-        owner.username
-
-
-    private fun dateToString(value: String): String {
-        val date = Date(value.toLong() * 1000)
-        return date.toLocaleString()
+    override fun onImageLoaded(bitmap: Bitmap) {
+        viewState.setImage(bitmap)
     }
 
-    private fun findUrlBiggest(list: List<Size>): String {
-        var max = list[0]
-        list.forEach {
-            if (max.width < it.width)
-                max = it
-        }
-        return max.source
-    }
-
-    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-        bitmap?.let {
-            viewState.setImage(it)
-        }
-    }
-
-    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-        e?.let {
-            viewState.showError(it)
-        }
+    override fun onImageFailed(t: Throwable) {
+        viewState.showError(t)
         viewState.setNoPhoto()
-    }
-
-    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
     }
 }

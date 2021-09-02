@@ -1,5 +1,8 @@
 package ru.neosvet.flickr.entities
 
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class InfoResponse (
@@ -124,4 +127,20 @@ data class Url (
 
 data class Urls (
     @SerializedName("url") var url : List<Url>
+)
+
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = PhotoItem::class,
+        parentColumns = ["id"],
+        childColumns = ["photoId"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class InfoItem(
+    @PrimaryKey val photoId: String,
+    val owner: String,
+    val date: String,
+    val title: String,
+    val description: String
 )

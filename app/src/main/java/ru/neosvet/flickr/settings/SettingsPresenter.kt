@@ -7,8 +7,6 @@ import ru.neosvet.flickr.entities.GalleryResponse
 import ru.neosvet.flickr.entities.UserResponse
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.screens.GalleryScreen
-import ru.neosvet.flickr.utils.GalleryType
-import ru.neosvet.flickr.utils.ISettings
 
 class SettingsPresenter(
     private val source: ISettingsSource,
@@ -35,9 +33,10 @@ class SettingsPresenter(
         viewState.setGallery(settings.getGalleryUrl())
     }
 
-    fun back() {
+    fun back(): Boolean {
         settings.save()
         router.replaceScreen(GalleryScreen.create())
+        return true
     }
 
     fun setUser(user_name: String) {

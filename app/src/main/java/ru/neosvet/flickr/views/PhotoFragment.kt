@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import moxy.ktx.moxyPresenter
+import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
@@ -20,17 +21,18 @@ import ru.neosvet.flickr.photo.PhotoPresenter
 import ru.neosvet.flickr.photo.PhotoView
 import ru.neosvet.flickr.photo.TitleIds
 import ru.neosvet.flickr.scheduler.Schedulers
+import ru.neosvet.flickr.storage.FlickrStorage
 import javax.inject.Inject
 
-class PhotoFragment : AbsFragment(), PhotoView {
+class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
     companion object {
         private const val ARG_PHOTO = "photo"
 
         @JvmStatic
-        fun newInstance(photo_id: String) =
+        fun newInstance(photoId: String) =
             PhotoFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PHOTO, photo_id)
+                    putString(ARG_PHOTO, photoId)
                 }
             }
     }
@@ -40,6 +42,9 @@ class PhotoFragment : AbsFragment(), PhotoView {
 
     @Inject
     lateinit var schedulers: Schedulers
+
+    @Inject
+    lateinit var storage: FlickrStorage
 
     private val titleIds by lazy {
         TitleIds(
@@ -52,17 +57,22 @@ class PhotoFragment : AbsFragment(), PhotoView {
 
     private val presenter by moxyPresenter {
         PhotoPresenter(
-            imageLoader = PicassoImageLoader,
             titleIds = titleIds,
-            source = source,
+            photo = source,
+            image = ru.neosvet.flickr.image.ImageSource(
+                context = requireContext(),
+                schedulers = schedulers,
+                loader = PicassoImageLoader,
+                storage = storage
+            ),
             schedulers = schedulers
         )
     }
 
     private var vb: FragmentPhotoBinding? = null
     private var adapter: InfoAdapter? = null
-    private var photo_id: String? = null
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private var photoId: String? = null
+    private lateinit var bottomSheet: BottomSheetBehavior<LinearLayout>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,14 +83,13 @@ class PhotoFragment : AbsFragment(), PhotoView {
         val v = FragmentPhotoBinding.inflate(inflater, container, false)
         v.zoomingView.setImage(ImageSource.resource(R.drawable.load_photo))
         vb = v
-        bottomSheetBehavior = BottomSheetBehavior.from(v.bottomSheetContainer)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheet = BottomSheetBehavior.from(v.bottomSheetContainer)
+        bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
 
         arguments?.let {
             it.getString(ARG_PHOTO)?.let { id ->
-                photo_id = id
+                photoId = id
                 presenter.load(id)
-                presenter.getInfo(id)
             }
         }
 
@@ -96,20 +105,20 @@ class PhotoFragment : AbsFragment(), PhotoView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN)
+        if (bottomSheet.state == BottomSheetBehavior.STATE_HIDDEN)
             openInfo()
         else
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
 
         return super.onOptionsItemSelected(item)
     }
 
     private fun openInfo() {
-        photo_id?.let {
+        photoId?.let {
             if (adapter == null)
                 initList()
             presenter.getInfo(it)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            bottomSheet.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
 
@@ -136,5 +145,14 @@ class PhotoFragment : AbsFragment(), PhotoView {
     override fun showError(t: Throwable) {
         t.printStackTrace()
         Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun back(): Boolean {
+        if (bottomSheet.state == BottomSheetBehavior.STATE_HIDDEN) {
+            return false
+        } else {
+            bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+            return true
+        }
     }
 }

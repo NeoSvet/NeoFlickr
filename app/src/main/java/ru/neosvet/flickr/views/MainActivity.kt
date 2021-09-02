@@ -1,5 +1,6 @@
 package ru.neosvet.flickr.views
 
+import android.Manifest
 import android.os.Bundle
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -12,6 +13,12 @@ import ru.neosvet.flickr.databinding.ActivityMainBinding
 import ru.neosvet.flickr.main.MainPresenter
 import ru.neosvet.flickr.main.MainView
 import javax.inject.Inject
+import androidx.core.app.ActivityCompat
+
+import android.content.pm.PackageManager
+
+
+
 
 class MainActivity : AbsActivity(), MainView {
 
@@ -34,6 +41,7 @@ class MainActivity : AbsActivity(), MainView {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
+        verifyStoragePermissions()
     }
 
     override fun onResumeFragments() {
@@ -48,11 +56,27 @@ class MainActivity : AbsActivity(), MainView {
 
     override fun onBackPressed() {
         supportFragmentManager.fragments.forEach {
-            if (it is BackEvent) {
-                it.back()
+            if (it is BackEvent && it.back())
                 return
-            }
         }
         presenter.back()
+    }
+
+    private fun verifyStoragePermissions(): Boolean {
+        //http://stackoverflow.com/questions/38989050/android-6-0-write-to-external-sd-card
+        val permission = ActivityCompat.checkSelfPermission(
+            this@MainActivity,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this@MainActivity, arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), 1
+            )
+            return true
+        }
+        return false
     }
 }

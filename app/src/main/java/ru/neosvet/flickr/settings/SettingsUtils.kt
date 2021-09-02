@@ -1,4 +1,4 @@
-package ru.neosvet.flickr.utils
+package ru.neosvet.flickr.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -17,10 +17,10 @@ class SettingsUtils @Inject constructor(
     private val DEFAULT_USER_NAME = "Raine Photos"
 
     private val GALLERY_ID = "gallery_id"
-    private val DEFAULT_GALLERY_ID = "66911286-72157651480893056"
+    private val DEFAULT_GALLERY_ID = "66911286-72157719421354859"
     private val GALLERY_URL = "gallery_url"
     private val DEFAULT_GALLERY_URL =
-        "https://www.flickr.com/photos/flickr/galleries/72157651480893056"
+        "https://www.flickr.com/photos/flickr/galleries/72157719421354859"
 
     private var isChanged = false
 

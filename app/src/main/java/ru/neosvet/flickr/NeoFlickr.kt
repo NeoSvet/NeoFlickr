@@ -6,6 +6,7 @@ import dagger.android.DaggerApplication
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import ru.neosvet.flickr.dagger.DaggerAppComponent
 import ru.neosvet.flickr.scheduler.DefaultSchedulers
+import ru.neosvet.flickr.storage.FlickrStorage
 
 class NeoFlickr : DaggerApplication() {
 
@@ -19,6 +20,8 @@ class NeoFlickr : DaggerApplication() {
                 withRouter(cicerone.router)
 
                 withSchedulers(DefaultSchedulers())
+                FlickrStorage.create(applicationContext)
+                withStorage(FlickrStorage.getInstance())
             }
             .build()
 

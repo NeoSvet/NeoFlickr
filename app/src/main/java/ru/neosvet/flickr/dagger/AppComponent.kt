@@ -9,6 +9,7 @@ import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import ru.neosvet.flickr.NeoFlickr
 import ru.neosvet.flickr.scheduler.Schedulers
+import ru.neosvet.flickr.storage.FlickrStorage
 import javax.inject.Singleton
 
 @Singleton
@@ -35,6 +36,9 @@ interface AppComponent : AndroidInjector<NeoFlickr> {
 
         @BindsInstance
         fun withSchedulers(schedulers: Schedulers): Builder
+
+        @BindsInstance
+        fun withStorage(storage: FlickrStorage): Builder
 
         fun build(): AppComponent
 

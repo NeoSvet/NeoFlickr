@@ -14,11 +14,13 @@ import ru.neosvet.flickr.databinding.FragmentGalleryBinding
 import ru.neosvet.flickr.gallery.GalleryPresenter
 import ru.neosvet.flickr.gallery.GalleryView
 import ru.neosvet.flickr.gallery.IGallerySource
+import ru.neosvet.flickr.image.ImageSource
 import ru.neosvet.flickr.image.PicassoImageLoader
 import ru.neosvet.flickr.list.GalleryAdapter
 import ru.neosvet.flickr.list.PageAdapter
 import ru.neosvet.flickr.scheduler.Schedulers
-import ru.neosvet.flickr.utils.ISettings
+import ru.neosvet.flickr.settings.ISettings
+import ru.neosvet.flickr.storage.FlickrStorage
 import javax.inject.Inject
 
 class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
@@ -34,6 +36,9 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
 
     @Inject
     lateinit var settings: ISettings
+
+    @Inject
+    lateinit var storage: FlickrStorage
 
     private val presenter by moxyPresenter {
         GalleryPresenter(
@@ -101,7 +106,12 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
         }
         adGallery = GalleryAdapter(
             presenter = presenter.galleryListPresenter,
-            imageLoader = PicassoImageLoader
+            source = ImageSource(
+                context = requireContext(),
+                schedulers = schedulers,
+                loader = PicassoImageLoader,
+                storage = storage
+            )
         )
         vb?.rvGallery?.adapter = adGallery
 
@@ -116,11 +126,13 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
         vb?.lProgress?.visibility = View.VISIBLE
     }
 
-    override fun updateList(page: Int, pages: Int) {
+    override fun updateGallery() {
         vb?.lProgress?.visibility = View.GONE
-
         adGallery?.notifyDataSetChanged()
+        vb?.rvGallery?.scrollToPosition(0)
+    }
 
+    override fun updatePages(page: Int, pages: Int) {
         if (pages == 1) {
             vb?.rvPages?.visibility = View.GONE
         } else {

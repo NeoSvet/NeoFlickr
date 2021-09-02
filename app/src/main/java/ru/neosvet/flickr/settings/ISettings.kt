@@ -1,4 +1,4 @@
-package ru.neosvet.flickr.utils
+package ru.neosvet.flickr.settings
 
 interface ISettings {
     fun save()

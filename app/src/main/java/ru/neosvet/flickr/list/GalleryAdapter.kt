@@ -13,10 +13,12 @@ import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.gallery.IGalleryItemView
 import ru.neosvet.flickr.gallery.IGalleryListPresenter
 import ru.neosvet.flickr.image.IImageLoader
+import ru.neosvet.flickr.image.IImageSource
+import ru.neosvet.flickr.image.ImageReceiver
 
 class GalleryAdapter(
     private val presenter: IGalleryListPresenter,
-    private val imageLoader: IImageLoader
+    private val source: IImageSource
 ) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -36,26 +38,21 @@ class GalleryAdapter(
         presenter.bindView(holder.apply { pos = position })
 
     inner class ViewHolder(private val vb: ItemGalleryBinding) : RecyclerView.ViewHolder(vb.root),
-        IGalleryItemView, Target {
+        IGalleryItemView, ImageReceiver {
         override var pos = -1
 
         override fun setPhoto(item: PhotoItem) = with(vb) {
             tvTitle.text = item.title
-            imageLoader.load(item.url, this@ViewHolder)
+            ivPhoto.setImageResource(R.drawable.load_photo)
+            source.getInnerImage(item.urlMini, this@ViewHolder)
         }
 
-        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-            bitmap?.let {
-                vb.ivPhoto.setImageBitmap(it)
-            }
+        override fun onImageLoaded(bitmap: Bitmap) {
+            vb.ivPhoto.setImageBitmap(bitmap)
         }
 
-        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+        override fun onImageFailed(t: Throwable) {
             vb.ivPhoto.setImageResource(R.drawable.no_photo)
-        }
-
-        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-            vb.ivPhoto.setImageResource(R.drawable.load_photo)
         }
     }
 }

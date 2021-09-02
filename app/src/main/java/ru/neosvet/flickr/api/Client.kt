@@ -18,23 +18,23 @@ interface Client {
 
     @GET("?method=flickr.photos.getPopular&per_page=30")
     fun getPopular(
-        @Query("user_id") user_id: String,
+        @Query("user_id") userId: String,
         @Query("page") page: Int
     ): Single<PhotosResponse>
 
     @GET("?method=flickr.photos.getSizes")
     fun getSizes(
-        @Query("photo_id") photo_id: String
+        @Query("photo_id") photoId: String
     ): Single<SizesResponse>
 
     @GET("?method=flickr.photos.getInfo")
     fun getInfo(
-        @Query("photo_id") photo_id: String
+        @Query("photo_id") photoId: String
     ): Single<InfoResponse>
 
     @GET("?method=flickr.galleries.getPhotos&per_page=30")
     fun getGallery(
-        @Query("gallery_id") gallery_id: String,
+        @Query("gallery_id") galleryId: String,
         @Query("page") page: Int
     ): Single<PhotosResponse>
 

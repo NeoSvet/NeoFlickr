@@ -3,14 +3,12 @@ package ru.neosvet.flickr.gallery
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
-import ru.neosvet.flickr.entities.Photo
 import ru.neosvet.flickr.entities.PhotoItem
-import ru.neosvet.flickr.entities.PhotosResponse
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.screens.PhotoScreen
 import ru.neosvet.flickr.screens.SettingsScreen
-import ru.neosvet.flickr.utils.GalleryType
-import ru.neosvet.flickr.utils.ISettings
+import ru.neosvet.flickr.settings.GalleryType
+import ru.neosvet.flickr.settings.ISettings
 
 class GalleryPresenter(
     private val source: IGallerySource,
@@ -56,8 +54,8 @@ class GalleryPresenter(
     private fun startLoading() {
         if (process?.isDisposed == false)
             process?.dispose()
-        else
-            viewState.showLoading()
+
+        viewState.showLoading()
     }
 
     override fun onDestroy() {
@@ -67,15 +65,11 @@ class GalleryPresenter(
     private fun loadPopular(page: Int) {
         query = null
         process = source.getPopular(settings.getUserId(), page)
-            .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
+            .flatMap(source::getPhotos)
+            .observeOn(schedulers.main())
             .subscribe(
-                this::parseResponse,
+                this::putPhotos,
                 viewState::showError
             )
     }
@@ -83,15 +77,11 @@ class GalleryPresenter(
     private fun loadGallery(page: Int) {
         query = null
         process = source.getGallery(settings.getGalleryId(), page)
-            .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
+            .flatMap(source::getPhotos)
+            .observeOn(schedulers.main())
             .subscribe(
-                this::parseResponse,
+                this::putPhotos,
                 viewState::showError
             )
     }
@@ -99,42 +89,22 @@ class GalleryPresenter(
     fun search(query: String, page: Int = 1) {
         startLoading()
         this.query = query
-        process = source.searchImages(query, page)
-            .observeOn(schedulers.main())
+        process = source.getSearch(query, page)
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
+            .flatMap(source::getPhotos)
+            .observeOn(schedulers.main())
             .subscribe(
-                this::parseResponse,
+                this::putPhotos,
                 viewState::showError
             )
     }
 
-    private fun parseResponse(response: PhotosResponse) {
-        val list = response.photos?.photo?.map {
-            PhotoItem(
-                id = it.id,
-                owner = it.owner,
-                url = getUrl(it),
-                title = it.title
-            )
-        }
-
-        if (list != null) {
-            galleryListPresenter.photos.clear()
-            galleryListPresenter.photos.addAll(list)
-            response.photos?.let {
-                viewState.updateList(it.page, it.pages)
-            }
-        }
+    private fun putPhotos(list: List<PhotoItem>) {
+        viewState.updatePages(source.currentPage, source.currentPages)
+        galleryListPresenter.photos.clear()
+        galleryListPresenter.photos.addAll(list)
+        viewState.updateGallery()
     }
-
-    private fun getUrl(photo: Photo) =
-        "https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_w.jpg"
-    //see more https://www.flickr.com/services/api/misc.urls.html
 
     fun openSettings() {
         router.replaceScreen(SettingsScreen.create())

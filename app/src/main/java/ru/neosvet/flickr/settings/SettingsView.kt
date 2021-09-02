@@ -2,7 +2,6 @@ package ru.neosvet.flickr.settings
 
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
-import ru.neosvet.flickr.utils.GalleryType
 
 @AddToEndSingle
 interface SettingsView : MvpView {

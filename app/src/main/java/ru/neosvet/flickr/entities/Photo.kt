@@ -1,5 +1,7 @@
 package ru.neosvet.flickr.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class PhotosResponse(
@@ -30,10 +32,12 @@ data class Photo(
     @SerializedName("has_comment") var hasComment: Int
 )
 
+@Entity
 data class PhotoItem(
-    val id: String,
+    @PrimaryKey val id: String,
     val owner: String,
-    val url: String,
-    val title: String
+    val urlMini: String,
+    var urlBig: String?,
+    var title: String
 )
 
