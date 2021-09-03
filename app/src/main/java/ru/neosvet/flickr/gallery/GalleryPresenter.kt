@@ -99,10 +99,15 @@ class GalleryPresenter(
             )
     }
 
+    private fun getList() = galleryListPresenter.photos
+
     private fun putPhotos(list: List<PhotoItem>) {
         viewState.updatePages(source.currentPage, source.currentPages)
-        galleryListPresenter.photos.clear()
-        galleryListPresenter.photos.addAll(list)
+
+        if (getList() == list)
+            return
+        getList().clear()
+        getList().addAll(list)
         viewState.updateGallery()
     }
 

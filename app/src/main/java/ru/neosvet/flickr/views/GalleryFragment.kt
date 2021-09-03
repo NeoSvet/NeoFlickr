@@ -40,6 +40,13 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     @Inject
     lateinit var storage: FlickrStorage
 
+    private val orientation: Orientation by lazy {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            Orientation.LANDSCAPE
+        else
+            Orientation.PORTRAIT
+    }
+
     private val presenter by moxyPresenter {
         GalleryPresenter(
             source = source,
@@ -98,7 +105,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     }
 
     override fun init() {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (orientation == Orientation.LANDSCAPE) {
             vb?.rvGallery?.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         } else {
@@ -111,7 +118,8 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
                 schedulers = schedulers,
                 loader = PicassoImageLoader,
                 storage = storage
-            )
+            ),
+            orientation = orientation
         )
         vb?.rvGallery?.adapter = adGallery
 
