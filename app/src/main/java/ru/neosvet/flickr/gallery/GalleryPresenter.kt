@@ -1,8 +1,10 @@
 package ru.neosvet.flickr.gallery
 
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
+import ru.neosvet.flickr.entities.GalleryItem
 import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.screens.PhotoScreen
@@ -18,9 +20,11 @@ class GalleryPresenter(
 ) : MvpPresenter<GalleryView>() {
     var query: String? = null
         private set
+    private var orderIds: List<String>? = null
 
     class GalleryListPresenter(private val router: Router) : IGalleryListPresenter {
         val photos = mutableListOf<PhotoItem>()
+
         override var itemClickListener: ((IGalleryItemView) -> Unit)? = { item ->
             val photo = photos[item.pos]
             router.navigateTo(PhotoScreen.create(photo.id))
@@ -66,7 +70,7 @@ class GalleryPresenter(
         query = null
         process = source.getPopular(settings.getUserId(), page)
             .subscribeOn(schedulers.background())
-            .flatMap(source::getPhotos)
+            .flatMap(this::getPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -78,7 +82,7 @@ class GalleryPresenter(
         query = null
         process = source.getGallery(settings.getGalleryId(), page)
             .subscribeOn(schedulers.background())
-            .flatMap(source::getPhotos)
+            .flatMap(this::getPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -91,7 +95,7 @@ class GalleryPresenter(
         this.query = query
         process = source.getSearch(query, page)
             .subscribeOn(schedulers.background())
-            .flatMap(source::getPhotos)
+            .flatMap(this::getPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -99,16 +103,34 @@ class GalleryPresenter(
             )
     }
 
+    private fun getPhotos(gallery: GalleryItem): Observable<List<PhotoItem>> {
+        orderIds = source.getListIds(gallery.photos)
+
+        return source.getPhotos(gallery)
+    }
+
     private fun getList() = galleryListPresenter.photos
 
     private fun putPhotos(list: List<PhotoItem>) {
         viewState.updatePages(source.currentPage, source.currentPages)
 
-        if (getList() == list)
+        val sortedList = sortPhotos(list)
+        if (getList() == sortedList)
             return
         getList().clear()
-        getList().addAll(list)
+        getList().addAll(sortedList)
         viewState.updateGallery()
+    }
+
+    private fun sortPhotos(list: List<PhotoItem>): List<PhotoItem> {
+        return orderIds?.let { ids ->
+            val newList = list.toMutableList()
+            list.forEach {
+                val n = ids.indexOf(it.id)
+                newList[n] = it
+            }
+            newList
+        } ?: list
     }
 
     fun openSettings() {

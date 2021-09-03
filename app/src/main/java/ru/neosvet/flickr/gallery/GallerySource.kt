@@ -21,16 +21,17 @@ class GallerySource @Inject constructor(
     private var currentName = "0"
 
     override var currentPage = 1
-    private set
+        private set
     override var currentPages = 1
-    private set
+        private set
+
+    override fun getListIds(photos: String) = photos.split(delimiter)
 
     override fun getPhotos(gallery: GalleryItem): Observable<List<PhotoItem>> {
         currentPage = gallery.page
         currentPages = gallery.pages
 
-        val ids = gallery.photos.split(delimiter)
-        return storage.photoDao.get(ids)
+        return storage.photoDao.get(getListIds(gallery.photos))
     }
 
     override fun getPopular(userId: String, page: Int): Observable<GalleryItem> {
