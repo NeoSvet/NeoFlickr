@@ -137,7 +137,11 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     override fun updateGallery() {
         vb?.lProgress?.visibility = View.GONE
         adGallery?.notifyDataSetChanged()
-        vb?.rvGallery?.scrollToPosition(0)
+
+        presenter.galleryListPresenter.lastClickedPos?.let {
+            vb?.rvGallery?.scrollToPosition(it)
+            presenter.galleryListPresenter.lastClickedPos = null
+        } ?: vb?.rvGallery?.scrollToPosition(0)
     }
 
     override fun updatePages(page: Int, pages: Int) {
@@ -162,6 +166,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     }
 
     override fun onPage(page: Int) {
+        presenter.galleryListPresenter.lastClickedPos = null
         presenter.changePage(page)
     }
 }

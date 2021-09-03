@@ -24,8 +24,10 @@ class GalleryPresenter(
 
     class GalleryListPresenter(private val router: Router) : IGalleryListPresenter {
         val photos = mutableListOf<PhotoItem>()
+        var lastClickedPos: Int? = null
 
         override var itemClickListener: ((IGalleryItemView) -> Unit)? = { item ->
+            lastClickedPos = item.pos
             val photo = photos[item.pos]
             router.navigateTo(PhotoScreen.create(photo.id))
         }
