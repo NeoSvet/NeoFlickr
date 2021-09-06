@@ -56,6 +56,7 @@ object PRDnlrImageLoader : IImageLoader {
 
     override fun cancel(url: String) {
         tasks[url]?.let {
+            tasks.remove(url)
             PRDownloader.cancel(it)
         }
     }
