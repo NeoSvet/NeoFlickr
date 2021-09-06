@@ -3,6 +3,7 @@ package ru.neosvet.flickr.image
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaScannerConnection
 import android.os.Environment
 import io.reactivex.rxjava3.core.Completable
 import ru.neosvet.flickr.entities.ImageItem
@@ -12,6 +13,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
+
 class ImageSource(
     private val context: Context,
     private val schedulers: Schedulers,
@@ -20,17 +22,18 @@ class ImageSource(
 ) : IImageSource {
 
     override fun getInnerImage(url: String, receiver: ImageReceiver) {
-        val path = context.filesDir.toString() + "/images/"
-
-        getImage(url, path, receiver)
+        getImage(url, getInnerPath(), receiver)
     }
 
     override fun getOuterImage(url: String, receiver: ImageReceiver) {
-        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            .getAbsolutePath() + "/NeoFlickr/"
-
-        getImage(url, path, receiver)
+        getImage(url, getOuterPath(), receiver)
     }
+
+    private fun getInnerPath() = context.filesDir.toString() + "/images/"
+
+    private fun getOuterPath() = Environment
+        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        .getAbsolutePath() + "/NeoFlickr/"
 
     private fun getImage(url: String, path: String, receiver: ImageReceiver) {
         val f = File(path)
@@ -75,9 +78,15 @@ class ImageSource(
     }
 
     private fun saveImage(bitmap: Bitmap, image: ImageItem) = Completable.fromCallable {
-        FileOutputStream(File(image.path)).use { fos ->
+        val file = File(image.path)
+        FileOutputStream(file).use { fos ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos)
         }
+        if (!image.path.contains(getInnerPath()))
+            MediaScannerConnection.scanFile(
+                context, arrayOf(file.toString()), null
+            ) { path, uri -> }
+
         storage.imageDao.insert(image)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
