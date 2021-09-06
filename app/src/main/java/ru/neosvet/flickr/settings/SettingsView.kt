@@ -1,9 +1,9 @@
 package ru.neosvet.flickr.settings
 
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.Skip
 
-@AddToEndSingle
+@Skip
 interface SettingsView : MvpView {
     fun setUser(user_name: String)
     fun setGallery(gallery_url: String)
