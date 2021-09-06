@@ -3,6 +3,7 @@ package ru.neosvet.flickr.photo
 import android.graphics.Bitmap
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
+import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.InfoItem
 import ru.neosvet.flickr.image.IImageSource
 import ru.neosvet.flickr.image.ImageReceiver
@@ -35,6 +36,7 @@ class PhotoPresenter(
     }
 
     fun load(photoId: String) {
+        viewState.showLoading()
         process = photo.getUrlBig(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
@@ -70,12 +72,22 @@ class PhotoPresenter(
         viewState.updateInfo()
     }
 
+    override var saveAs: ImageItem? = null
+
     override fun onImageLoaded(bitmap: Bitmap) {
         viewState.setImage(bitmap)
+        saveAs?.let {
+            image.save(bitmap, it)
+        }
     }
 
     override fun onImageFailed(t: Throwable) {
         viewState.showError(t)
         viewState.setNoPhoto()
+    }
+
+    override fun onLoadProgress(bytes: Long) {
+        val kb = bytes / 1024f
+        viewState.setLoadProgress(String.format("%.1f KB", kb))
     }
 }

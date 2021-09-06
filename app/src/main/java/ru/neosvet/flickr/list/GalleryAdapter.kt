@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.databinding.ItemGalleryBinding
+import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.gallery.IGalleryItemView
 import ru.neosvet.flickr.gallery.IGalleryListPresenter
@@ -19,6 +20,15 @@ class GalleryAdapter(
     private val source: IImageSource,
     private val orientation: Orientation
 ) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
+    private var sizeItem: Point? = null
+    private fun getSize(vb: ItemGalleryBinding): Point {
+        sizeItem?.let {
+            return it
+        }
+        val s = Point(vb.root.width, vb.root.height)
+        sizeItem = s
+        return s
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(
@@ -36,30 +46,37 @@ class GalleryAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         presenter.bindView(holder.apply { pos = position })
 
-    inner class ViewHolder(private val vb: ItemGalleryBinding) : RecyclerView.ViewHolder(vb.root),
+    inner class ViewHolder(private val vb: ItemGalleryBinding) :
+        RecyclerView.ViewHolder(vb.root),
         IGalleryItemView, ImageReceiver {
         override var pos = -1
-        private val size: Point by lazy {
-            Point(vb.root.width, vb.root.height)
-        }
+        override var saveAs: ImageItem? = null
+        private var url: String? = null
 
         override fun setPhoto(item: PhotoItem) = with(vb) {
+            url?.let {
+                source.cancelLoad(it)
+            }
             tvTitle.text = item.title
             ivPhoto.setImageResource(R.drawable.load_photo)
+            url = item.urlMini
             source.getInnerImage(item.urlMini, this@ViewHolder)
         }
 
         override fun onImageLoaded(bitmap: Bitmap) {
             vb.ivPhoto.setImageBitmap(bitmap)
+            saveAs?.let {
+                source.save(bitmap, it)
+            }
 
             updateSize(bitmap.width, bitmap.height)
         }
 
         private fun updateSize(width: Int, height: Int) {
             val r = if (orientation == Orientation.LANDSCAPE)
-                size.y.toFloat() / height
+                getSize(vb).y.toFloat() / height
             else
-                size.x.toFloat() / width
+                getSize(vb).x.toFloat() / width
 
             val h = (height * r).toInt()
             val w = (width * r).toInt()
@@ -70,12 +87,16 @@ class GalleryAdapter(
                         this.height = h
                         this.width = w
                     }
+                    this@GalleryAdapter.notifyItemChanged(pos)
                 }
             }
         }
 
         override fun onImageFailed(t: Throwable) {
             vb.ivPhoto.setImageResource(R.drawable.no_photo)
+        }
+
+        override fun onLoadProgress(bytes: Long) {
         }
     }
 }

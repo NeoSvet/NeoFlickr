@@ -15,7 +15,7 @@ import ru.neosvet.flickr.gallery.GalleryPresenter
 import ru.neosvet.flickr.gallery.GalleryView
 import ru.neosvet.flickr.gallery.IGallerySource
 import ru.neosvet.flickr.image.ImageSource
-import ru.neosvet.flickr.image.PicassoImageLoader
+import ru.neosvet.flickr.image.PRDnlrImageLoader
 import ru.neosvet.flickr.list.GalleryAdapter
 import ru.neosvet.flickr.list.PageAdapter
 import ru.neosvet.flickr.scheduler.Schedulers
@@ -116,7 +116,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
             source = ImageSource(
                 context = requireContext(),
                 schedulers = schedulers,
-                loader = PicassoImageLoader,
+                loader = PRDnlrImageLoader,
                 storage = storage
             ),
             orientation = orientation
@@ -156,6 +156,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     }
 
     override fun showError(t: Throwable) {
+        vb?.lProgress?.visibility = View.GONE
         t.printStackTrace()
         Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
     }

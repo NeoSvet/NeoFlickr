@@ -14,7 +14,7 @@ import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
-import ru.neosvet.flickr.image.PicassoImageLoader
+import ru.neosvet.flickr.image.PRDnlrImageLoader
 import ru.neosvet.flickr.list.InfoAdapter
 import ru.neosvet.flickr.photo.IPhotoSource
 import ru.neosvet.flickr.photo.PhotoPresenter
@@ -62,7 +62,7 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
             image = ru.neosvet.flickr.image.ImageSource(
                 context = requireContext(),
                 schedulers = schedulers,
-                loader = PicassoImageLoader,
+                loader = PRDnlrImageLoader,
                 storage = storage
             ),
             schedulers = schedulers
@@ -81,7 +81,6 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         setHasOptionsMenu(true)
 
         val v = FragmentPhotoBinding.inflate(inflater, container, false)
-        v.zoomingView.setImage(ImageSource.resource(R.drawable.load_photo))
         vb = v
         bottomSheet = BottomSheetBehavior.from(v.bottomSheetContainer)
         bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
@@ -131,15 +130,32 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
     }
 
     override fun setImage(bitmap: Bitmap) {
-        vb?.zoomingView?.setImage(ImageSource.bitmap(bitmap))
+        vb?.run {
+            lProgress.visibility = View.GONE
+            zoomingView.setImage(ImageSource.bitmap(bitmap))
+        }
     }
 
     override fun setNoPhoto() {
-        vb?.zoomingView?.setImage(ImageSource.resource(R.drawable.no_photo))
+        vb?.run {
+            lProgress.visibility = View.GONE
+            zoomingView.setImage(ImageSource.resource(R.drawable.no_photo))
+        }
     }
 
     override fun updateInfo() {
         adapter?.notifyDataSetChanged()
+    }
+
+    override fun showLoading() {
+        vb?.run {
+            tvProgress.text = ""
+            lProgress.visibility = View.VISIBLE
+        }
+    }
+
+    override fun setLoadProgress(stat: String) {
+        vb?.tvProgress?.text = stat
     }
 
     override fun showError(t: Throwable) {

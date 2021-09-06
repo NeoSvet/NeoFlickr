@@ -1,7 +1,6 @@
 package ru.neosvet.flickr.image
 
-import com.squareup.picasso.Target
-
 interface IImageLoader {
-    fun load(url: String, target: Target)
+    fun load(url: String, receiver: ImageReceiver)
+    fun cancel(url: String)
 }
