@@ -7,6 +7,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.NeoFlickr
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.storage.FlickrStorage
@@ -39,6 +40,9 @@ interface AppComponent : AndroidInjector<NeoFlickr> {
 
         @BindsInstance
         fun withStorage(storage: FlickrStorage): Builder
+
+        @BindsInstance
+        fun withNetworkStatus(networkStatus: INetworkStatus): Builder
 
         fun build(): AppComponent
 

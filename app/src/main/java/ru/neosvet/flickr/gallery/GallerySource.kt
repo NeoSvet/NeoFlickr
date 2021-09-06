@@ -1,6 +1,7 @@
 package ru.neosvet.flickr.gallery
 
 import io.reactivex.rxjava3.core.Observable
+import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.api.Client
 import ru.neosvet.flickr.entities.GalleryItem
 import ru.neosvet.flickr.entities.Photo
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class GallerySource @Inject constructor(
     private val schedulers: Schedulers,
     private val api: Client,
-    private val storage: FlickrStorage
+    private val storage: FlickrStorage,
+    private val networkStatus: INetworkStatus
 ) : IGallerySource {
     private val delimiter = "@"
     private val SEARCH = "search:"
@@ -37,10 +39,15 @@ class GallerySource @Inject constructor(
     override fun getPopular(userId: String, page: Int): Observable<GalleryItem> {
         currentName = userId + PAGE + page
 
-        return Observable.merge(
-            storage.galleryDao.get(currentName, page),
-            loadPopular(userId, page)
-        )
+        return networkStatus.isOnline().flatMap { isOnline ->
+            if (isOnline) {
+                Observable.merge(
+                    storage.galleryDao.get(currentName, page),
+                    loadPopular(userId, page)
+                )
+            } else
+                storage.galleryDao.get(currentName, page)
+        }
     }
 
     private fun loadPopular(userId: String, page: Int): Observable<GalleryItem> =
@@ -53,10 +60,15 @@ class GallerySource @Inject constructor(
     override fun getGallery(galleryId: String, page: Int): Observable<GalleryItem> {
         currentName = galleryId + PAGE + page
 
-        return Observable.merge(
-            storage.galleryDao.get(currentName, page),
-            loadGallery(galleryId, page)
-        )
+        return networkStatus.isOnline().flatMap { isOnline ->
+            if (isOnline) {
+                Observable.merge(
+                    storage.galleryDao.get(currentName, page),
+                    loadGallery(galleryId, page)
+                )
+            } else
+                storage.galleryDao.get(currentName, page)
+        }
     }
 
     private fun loadGallery(galleryId: String, page: Int): Observable<GalleryItem> =

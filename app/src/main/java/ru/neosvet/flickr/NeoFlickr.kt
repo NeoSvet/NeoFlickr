@@ -4,6 +4,7 @@ import com.github.terrakok.cicerone.Cicerone
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import ru.neosvet.android4.ui.network.MyNetworkStatus
 import ru.neosvet.flickr.dagger.DaggerAppComponent
 import ru.neosvet.flickr.image.PRDnlrImageLoader
 import ru.neosvet.flickr.scheduler.DefaultSchedulers
@@ -23,6 +24,7 @@ class NeoFlickr : DaggerApplication() {
                 withSchedulers(DefaultSchedulers())
                 FlickrStorage.create(applicationContext)
                 withStorage(FlickrStorage.getInstance())
+                withNetworkStatus(MyNetworkStatus(applicationContext))
             }
             .build()
 

@@ -47,7 +47,8 @@ class PhotoPresenter(
     }
 
     private fun loadUrl(url: String) {
-        image.getOuterImage(url, this)
+        if (url.isNotEmpty())
+            image.getOuterImage(url, this)
     }
 
     fun getInfo(photoId: String) {

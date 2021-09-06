@@ -1,5 +1,6 @@
 package ru.neosvet.flickr.gallery
 
+import android.util.Log
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -22,11 +23,15 @@ class GalleryPresenter(
         private set
     private var orderIds: List<String>? = null
 
-    class GalleryListPresenter(private val router: Router) : IGalleryListPresenter {
+    class GalleryListPresenter(
+        private val router: Router,
+        private val presenter: GalleryPresenter
+    ) : IGalleryListPresenter {
         val photos = mutableListOf<PhotoItem>()
         var lastClickedPos: Int? = null
 
         override var itemClickListener: ((IGalleryItemView) -> Unit)? = { item ->
+            presenter.stop()
             lastClickedPos = item.pos
             val photo = photos[item.pos]
             router.navigateTo(PhotoScreen.create(photo.id))
@@ -40,7 +45,7 @@ class GalleryPresenter(
         override fun getCount() = photos.size
     }
 
-    val galleryListPresenter = GalleryListPresenter(router)
+    val galleryListPresenter = GalleryListPresenter(router, this)
     private var process: Disposable? = null
 
     override fun onFirstViewAttach() {
@@ -65,6 +70,11 @@ class GalleryPresenter(
     }
 
     override fun onDestroy() {
+        Log.d("mylog", "onDestroy")
+        process?.dispose()
+    }
+
+    fun stop() {
         process?.dispose()
     }
 

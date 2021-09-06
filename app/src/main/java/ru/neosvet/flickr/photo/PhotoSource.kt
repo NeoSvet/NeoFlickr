@@ -1,7 +1,7 @@
 package ru.neosvet.flickr.photo
 
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.api.Client
 import ru.neosvet.flickr.entities.*
 import ru.neosvet.flickr.scheduler.Schedulers
@@ -12,25 +12,40 @@ import javax.inject.Inject
 class PhotoSource @Inject constructor(
     private val schedulers: Schedulers,
     private val api: Client,
-    private val storage: FlickrStorage
+    private val storage: FlickrStorage,
+    private val networkStatus: INetworkStatus
 ) : IPhotoSource {
     private var currentId = ""
 
-    override fun getUrlBig(photoId: String): Single<String> {
+    override fun getUrlBig(photoId: String): Observable<String> {
         currentId = photoId
 
-        return storage.photoDao.get(photoId).flatMap {
-            it.urlBig?.let {
-                Single.fromCallable { it }
-            } ?: api.getSizes(photoId)
-                .map {
-                    if (it.stat.equals("fail"))
-                        throw Exception(it.message)
-                    it
-                }
-                .map(this::parseSizes)
+        return networkStatus.isOnline().flatMap { isOnline ->
+            if (isOnline) {
+                Observable.merge(
+                    getSize(photoId),
+                    loadSize(photoId)
+                )
+            } else
+                getSize(photoId)
         }
     }
+
+
+    private fun getSize(photoId: String) =
+        storage.photoDao.get(photoId).map {
+            it.urlBig ?: ""
+        }.toObservable()
+
+    private fun loadSize(photoId: String): Observable<String> =
+        api.getSizes(photoId)
+            .map {
+                if (it.stat.equals("fail"))
+                    throw Exception(it.message)
+                it
+            }
+            .map(this::parseSizes)
+            .toObservable()
 
     private fun parseSizes(response: SizesResponse): String {
         response.sizes?.size?.let {
@@ -53,10 +68,16 @@ class PhotoSource @Inject constructor(
         return max.source
     }
 
-    override fun getInfo(photoId: String): Observable<InfoItem> = Observable.merge(
-        storage.infoDao.get(photoId),
-        loadInfo(photoId)
-    )
+    override fun getInfo(photoId: String): Observable<InfoItem> =
+        networkStatus.isOnline().flatMap { isOnline ->
+            if (isOnline) {
+                Observable.merge(
+                    storage.infoDao.get(photoId),
+                    loadInfo(photoId)
+                )
+            } else
+                storage.infoDao.get(photoId)
+        }
 
     private fun loadInfo(photoId: String): Observable<InfoItem> =
         api.getInfo(photoId)
