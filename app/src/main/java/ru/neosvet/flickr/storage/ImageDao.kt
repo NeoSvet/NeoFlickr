@@ -9,7 +9,7 @@ import ru.neosvet.flickr.entities.ImageItem
 
 @Dao
 interface ImageDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(image: ImageItem): Completable
 
     @Update
