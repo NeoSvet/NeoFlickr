@@ -12,6 +12,7 @@ import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.databinding.FragmentSettingsBinding
+import ru.neosvet.flickr.image.ImageSource
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.settings.ISettingsSource
 import ru.neosvet.flickr.settings.SettingsField
@@ -56,32 +57,38 @@ class SettingsFragment : AbsFragment(), SettingsView, BackEvent {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vb?.etUser?.setOnKeyListener(View.OnKeyListener { view, keyCode, keyEvent ->
-            if (keyEvent.action === KeyEvent.ACTION_DOWN && keyEvent.keyCode === KeyEvent.KEYCODE_ENTER
-                || keyCode == EditorInfo.IME_ACTION_SEARCH
-            ) {
-                presenter.setUser(vb?.etUser?.text.toString())
-                return@OnKeyListener true
+        vb?.run {
+            etUser.setOnKeyListener(View.OnKeyListener { view, keyCode, keyEvent ->
+                if (keyEvent.action === KeyEvent.ACTION_DOWN && keyEvent.keyCode === KeyEvent.KEYCODE_ENTER
+                    || keyCode == EditorInfo.IME_ACTION_SEARCH
+                ) {
+                    presenter.setUser(etUser.text.toString())
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            etGallery.setOnKeyListener(View.OnKeyListener { view, keyCode, keyEvent ->
+                if (keyEvent.action === KeyEvent.ACTION_DOWN && keyEvent.keyCode === KeyEvent.KEYCODE_ENTER
+                    || keyCode == EditorInfo.IME_ACTION_SEARCH
+                ) {
+                    presenter.setGallery(etGallery.text.toString())
+                    return@OnKeyListener true
+                }
+                false
+            })
+
+            btnPopular.setOnClickListener {
+                presenter.setGalleryType(GalleryType.Popular)
             }
-            false
-        })
 
-        vb?.etGallery?.setOnKeyListener(View.OnKeyListener { view, keyCode, keyEvent ->
-            if (keyEvent.action === KeyEvent.ACTION_DOWN && keyEvent.keyCode === KeyEvent.KEYCODE_ENTER
-                || keyCode == EditorInfo.IME_ACTION_SEARCH
-            ) {
-                presenter.setGallery(vb?.etGallery?.text.toString())
-                return@OnKeyListener true
+            btnGallery.setOnClickListener {
+                presenter.setGalleryType(GalleryType.Gallery)
             }
-            false
-        })
 
-        vb?.btnPopular?.setOnClickListener {
-            presenter.setGalleryType(GalleryType.Popular)
-        }
-
-        vb?.btnGallery?.setOnClickListener {
-            presenter.setGalleryType(GalleryType.Gallery)
+            btnClearThumbs.setOnClickListener {
+                presenter.deleteFolder(ImageSource.getInnerPath(requireContext()))
+            }
         }
     }
 

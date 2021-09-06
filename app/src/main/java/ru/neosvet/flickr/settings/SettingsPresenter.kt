@@ -7,6 +7,7 @@ import ru.neosvet.flickr.entities.GalleryResponse
 import ru.neosvet.flickr.entities.UserResponse
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.screens.GalleryScreen
+import java.io.File
 
 class SettingsPresenter(
     private val source: ISettingsSource,
@@ -31,6 +32,17 @@ class SettingsPresenter(
         viewState.setGalleryType(settings.getGalleryType())
         viewState.setUser(settings.getUserName())
         viewState.setGallery(settings.getGalleryUrl())
+    }
+
+    fun deleteFolder(path: String) {
+        try {
+            val folder = File(path)
+            folder.listFiles().forEach {
+                it.delete()
+            }
+            folder.delete()
+        } catch (e: Exception) {
+        }
     }
 
     fun back(): Boolean {

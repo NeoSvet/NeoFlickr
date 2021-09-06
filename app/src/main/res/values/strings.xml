@@ -12,4 +12,5 @@
     <string name="gallery">Галерея</string>
     <string name="link">Сссылка</string>
     <string name="search">Поиск</string>
+    <string name="clear_thumbs">Очистить кэш миниатюр</string>
 </resources>

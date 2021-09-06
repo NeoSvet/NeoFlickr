@@ -21,15 +21,17 @@ class ImageSource(
     private val storage: FlickrStorage
 ) : IImageSource {
 
+    companion object {
+        fun getInnerPath(context: Context) = context.filesDir.toString() + "/images/"
+    }
+
     override fun getInnerImage(url: String, receiver: ImageReceiver) {
-        getImage(url, getInnerPath(), receiver)
+        getImage(url, getInnerPath(context), receiver)
     }
 
     override fun getOuterImage(url: String, receiver: ImageReceiver) {
         getImage(url, getOuterPath(), receiver)
     }
-
-    private fun getInnerPath() = context.filesDir.toString() + "/images/"
 
     private fun getOuterPath() = Environment
         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -82,7 +84,7 @@ class ImageSource(
         FileOutputStream(file).use { fos ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos)
         }
-        if (!image.path.contains(getInnerPath()))
+        if (!image.path.contains(getInnerPath(context)))
             MediaScannerConnection.scanFile(
                 context, arrayOf(file.toString()), null
             ) { path, uri -> }
