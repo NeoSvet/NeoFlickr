@@ -18,6 +18,9 @@ object PRDnlrImageLoader : IImageLoader {
     }
 
     override fun load(url: String, receiver: ImageReceiver) {
+        tasks[url]?.let {
+            return
+        }
         receiver.saveAs?.let {
             if (!folder.exists())
                 folder.mkdir()
