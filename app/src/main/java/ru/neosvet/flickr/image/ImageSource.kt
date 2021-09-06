@@ -25,17 +25,19 @@ class ImageSource(
         fun getInnerPath(context: Context) = context.filesDir.toString() + "/images/"
     }
 
+    private val outerPath: String by lazy {
+        Environment
+            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            .getAbsolutePath() + "/NeoFlickr/"
+    }
+
     override fun getInnerImage(url: String, receiver: ImageReceiver) {
         getImage(url, getInnerPath(context), receiver)
     }
 
     override fun getOuterImage(url: String, receiver: ImageReceiver) {
-        getImage(url, getOuterPath(), receiver)
+        getImage(url, outerPath, receiver)
     }
-
-    private fun getOuterPath() = Environment
-        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-        .getAbsolutePath() + "/NeoFlickr/"
 
     private fun getImage(url: String, path: String, receiver: ImageReceiver) {
         val f = File(path)
@@ -84,7 +86,7 @@ class ImageSource(
         FileOutputStream(file).use { fos ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos)
         }
-        if (!image.path.contains(getInnerPath(context)))
+        if (image.path.contains(outerPath))
             MediaScannerConnection.scanFile(
                 context, arrayOf(file.toString()), null
             ) { path, uri -> }
