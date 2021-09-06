@@ -7,7 +7,6 @@ import ru.neosvet.flickr.entities.GalleryItem
 import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.InfoItem
 import ru.neosvet.flickr.entities.PhotoItem
-import java.lang.IllegalStateException
 
 @androidx.room.Database(
     entities = [
@@ -26,12 +25,10 @@ abstract class FlickrStorage : RoomDatabase() {
 
     companion object {
         private const val DB_NAME = "database.db"
-        private var instance: FlickrStorage? = null
-        fun getInstance() = instance ?: throw IllegalStateException("Database has not been created")
-        fun create(context: Context) {
-            if (instance == null) {
-                instance = Room.databaseBuilder(context, FlickrStorage::class.java, DB_NAME).build()
-            }
-        }
+
+        fun get(context: Context) =
+            Room.databaseBuilder(context, FlickrStorage::class.java, DB_NAME)
+                .build()
     }
+
 }

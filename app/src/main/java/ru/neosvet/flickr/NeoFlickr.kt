@@ -22,8 +22,7 @@ class NeoFlickr : DaggerApplication() {
                 withRouter(cicerone.router)
 
                 withSchedulers(DefaultSchedulers())
-                FlickrStorage.create(applicationContext)
-                withStorage(FlickrStorage.getInstance())
+                withStorage(FlickrStorage.get(applicationContext))
                 withNetworkStatus(MyNetworkStatus(applicationContext))
             }
             .build()
