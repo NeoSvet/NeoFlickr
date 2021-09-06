@@ -73,6 +73,7 @@ class GalleryPresenter(
         process = source.getPopular(settings.getUserId(), page)
             .subscribeOn(schedulers.background())
             .flatMap(this::getPhotos)
+            .map(this::sortPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -85,6 +86,7 @@ class GalleryPresenter(
         process = source.getGallery(settings.getGalleryId(), page)
             .subscribeOn(schedulers.background())
             .flatMap(this::getPhotos)
+            .map(this::sortPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -98,6 +100,7 @@ class GalleryPresenter(
         process = source.getSearch(query, page)
             .subscribeOn(schedulers.background())
             .flatMap(this::getPhotos)
+            .map(this::sortPhotos)
             .observeOn(schedulers.main())
             .subscribe(
                 this::putPhotos,
@@ -116,11 +119,10 @@ class GalleryPresenter(
     private fun putPhotos(list: List<PhotoItem>) {
         viewState.updatePages(source.currentPage, source.currentPages)
 
-        val sortedList = sortPhotos(list)
-        if (getList() == sortedList)
+        if (getList() == list)
             return
         getList().clear()
-        getList().addAll(sortedList)
+        getList().addAll(list)
         viewState.updateGallery()
     }
 
@@ -129,7 +131,8 @@ class GalleryPresenter(
             val newList = list.toMutableList()
             list.forEach {
                 val n = ids.indexOf(it.id)
-                newList[n] = it
+                if (n < newList.size)
+                    newList[n] = it
             }
             newList
         } ?: list
