@@ -47,7 +47,7 @@ class PhotoSource @Inject constructor(
     private fun findUrlBiggest(list: List<Size>): String {
         var max = list[0]
         list.forEach {
-            if (max.width < it.width)
+            if (max.width < it.width && it.label != "Original")
                 max = it
         }
         return max.source
