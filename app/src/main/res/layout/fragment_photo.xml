@@ -40,7 +40,7 @@
         android:id="@+id/bottom_sheet_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#CCDDDDDD"
+        android:background="?attr/translucent_bg"
         android:orientation="vertical"
         android:padding="8dp"
         app:behavior_hideable="true"
