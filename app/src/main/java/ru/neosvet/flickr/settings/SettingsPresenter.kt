@@ -34,13 +34,12 @@ class SettingsPresenter(
         viewState.setGallery(settings.getGalleryUrl())
     }
 
-    fun deleteFolder(path: String) {
+    fun clearFolder(path: String) {
         try {
             val folder = File(path)
             folder.listFiles().forEach {
                 it.delete()
             }
-            folder.delete()
         } catch (e: Exception) {
         }
     }

@@ -15,6 +15,8 @@ object PRDnlrImageLoader : IImageLoader {
     fun init(context: Context) {
         PRDownloader.initialize(context)
         folder = context.filesDir
+        if (!folder.exists())
+            folder.mkdir()
     }
 
     override fun load(url: String, receiver: ImageReceiver) {
@@ -22,8 +24,6 @@ object PRDnlrImageLoader : IImageLoader {
             return
         }
         receiver.saveAs?.let {
-            if (!folder.exists())
-                folder.mkdir()
             val file = File(it.path)
             val id = PRDownloader.download(url, folder.toString(), file.name)
                 .build()

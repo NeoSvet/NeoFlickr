@@ -87,7 +87,7 @@ class SettingsFragment : AbsFragment(), SettingsView, BackEvent {
             }
 
             btnClearThumbs.setOnClickListener {
-                presenter.deleteFolder(ImageSource.getInnerPath(requireContext()))
+                presenter.clearFolder(ImageSource.getInnerPath(requireContext()))
             }
         }
     }
