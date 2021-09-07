@@ -30,6 +30,7 @@ class PhotoPresenter(
 
     val infoListPresenter = InfoListPresenter()
     private var process: Disposable? = null
+    private var sizes: String? = null
 
     override fun onDestroy() {
         process?.dispose()
@@ -67,6 +68,9 @@ class PhotoPresenter(
             clear()
             add(Pair(titleIds.owner, info.owner))
             add(Pair(titleIds.date, info.date))
+            sizes?.let {
+                add(Pair(titleIds.sizes, it))
+            }
             add(Pair(titleIds.title, info.title))
             if (info.description.isNotEmpty())
                 add(Pair(titleIds.description, info.description))
@@ -77,6 +81,7 @@ class PhotoPresenter(
     override var saveAs: ImageItem? = null
 
     override fun onImageLoaded(bitmap: Bitmap) {
+        sizes = "${bitmap.width} x ${bitmap.height}"
         viewState.setImage(bitmap)
         saveAs?.let {
             image.save(bitmap, it)

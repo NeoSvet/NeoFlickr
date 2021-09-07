@@ -3,6 +3,7 @@
     <string name="info">Сведения</string>
     <string name="owner">Владелец</string>
     <string name="date">Дата</string>
+    <string name="sizes">Размеры (ш х в)</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
     <string name="settings">Настройки</string>

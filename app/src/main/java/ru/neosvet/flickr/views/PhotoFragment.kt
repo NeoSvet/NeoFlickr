@@ -50,6 +50,7 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         TitleIds(
             owner = R.string.owner,
             date = R.string.date,
+            sizes = R.string.sizes,
             title = R.string.title,
             description = R.string.description
         )
