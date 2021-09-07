@@ -117,7 +117,6 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
             if (adapter == null)
                 initList()
             presenter.getInfo(it)
-            bottomSheet.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
     }
 
@@ -144,7 +143,9 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
     }
 
     override fun updateInfo() {
+        bottomSheet.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         adapter?.notifyDataSetChanged()
+        vb?.lProgress?.visibility = View.GONE
     }
 
     override fun showLoading() {

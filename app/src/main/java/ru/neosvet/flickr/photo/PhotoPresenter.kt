@@ -52,6 +52,7 @@ class PhotoPresenter(
     }
 
     fun getInfo(photoId: String) {
+        viewState.showLoading()
         process = photo.getInfo(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
