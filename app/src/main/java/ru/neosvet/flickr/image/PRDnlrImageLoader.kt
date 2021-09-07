@@ -15,8 +15,6 @@ object PRDnlrImageLoader : IImageLoader {
     fun init(context: Context) {
         PRDownloader.initialize(context)
         folder = context.filesDir
-        if (!folder.exists())
-            folder.mkdir()
     }
 
     override fun load(url: String, receiver: ImageReceiver) {
