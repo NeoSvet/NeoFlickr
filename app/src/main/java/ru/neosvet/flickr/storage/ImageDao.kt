@@ -18,9 +18,9 @@ interface ImageDao {
     @Delete
     fun delete(image: ImageItem): Completable
 
-    @Query("SELECT * FROM ImageItem")
+    @Query("SELECT * FROM Image")
     fun getAll(): Single<List<ImageItem>>
 
-    @Query("SELECT * FROM ImageItem WHERE url = :url")
+    @Query("SELECT * FROM Image WHERE url = :url")
     fun get(url: String): Single<ImageItem>
 }

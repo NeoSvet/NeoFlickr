@@ -48,7 +48,7 @@ data class CoverPhoto(
     @SerializedName("is_video") var isVideo: Int
 )
 
-@Entity
+@Entity(tableName = "Gallery")
 data class GalleryItem(
     @PrimaryKey val name: String,
     val page: Int,

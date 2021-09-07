@@ -32,7 +32,7 @@ data class Photo(
     @SerializedName("has_comment") var hasComment: Int
 )
 
-@Entity
+@Entity(tableName = "Photo")
 data class PhotoItem(
     @PrimaryKey val id: String,
     val owner: String,

@@ -18,9 +18,9 @@ interface InfoDao {
     @Delete
     fun delete(info: InfoItem): Completable
 
-    @Query("SELECT * FROM InfoItem")
+    @Query("SELECT * FROM Info")
     fun getAll(): Single<List<InfoItem>>
 
-    @Query("SELECT * FROM InfoItem WHERE photoId = :photoId LIMIT 1")
+    @Query("SELECT * FROM Info WHERE photoId = :photoId LIMIT 1")
     fun get(photoId: String): Observable<InfoItem>
 }

@@ -130,6 +130,7 @@ data class Urls (
 )
 
 @Entity(
+    tableName = "Info",
     foreignKeys = [ForeignKey(
         entity = PhotoItem::class,
         parentColumns = ["id"],

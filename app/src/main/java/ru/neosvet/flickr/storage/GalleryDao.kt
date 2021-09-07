@@ -17,9 +17,9 @@ interface GalleryDao {
     @Delete
     fun delete(gallery: GalleryItem): Completable
 
-    @Query("SELECT * FROM GalleryItem")
+    @Query("SELECT * FROM Gallery")
     fun getAll(): Single<List<GalleryItem>>
 
-    @Query("SELECT * FROM GalleryItem WHERE name = :name AND page = :page")
+    @Query("SELECT * FROM Gallery WHERE name = :name AND page = :page")
     fun get(name: String, page: Int): Observable<GalleryItem>
 }
