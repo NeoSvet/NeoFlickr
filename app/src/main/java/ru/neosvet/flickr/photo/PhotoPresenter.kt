@@ -101,6 +101,10 @@ class PhotoPresenter(
 
     override var saveAs: ImageItem? = null
 
+    override fun startLoading() {
+        viewState.showLoading()
+    }
+
     override fun onImageLoaded(bitmap: Bitmap) {
         sizes = "${bitmap.width} x ${bitmap.height}"
         viewState.setImage(bitmap)

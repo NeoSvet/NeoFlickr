@@ -13,7 +13,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-
 class ImageSource(
     private val context: Context,
     private val schedulers: Schedulers,
@@ -73,6 +72,7 @@ class ImageSource(
     }
 
     private fun startLoad(url: String, path: String, receiver: ImageReceiver) {
+        receiver.startLoading()
         val id = UUID.randomUUID().toString()
         receiver.saveAs = ImageItem(
             url = url,

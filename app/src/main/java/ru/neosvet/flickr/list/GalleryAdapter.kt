@@ -14,6 +14,7 @@ import ru.neosvet.flickr.gallery.IGalleryListPresenter
 import ru.neosvet.flickr.image.IImageSource
 import ru.neosvet.flickr.image.ImageReceiver
 import ru.neosvet.flickr.views.Orientation
+import java.io.File
 
 class GalleryAdapter(
     private val presenter: IGalleryListPresenter,
@@ -51,6 +52,7 @@ class GalleryAdapter(
         IGalleryItemView, ImageReceiver {
         override var pos = -1
         override var saveAs: ImageItem? = null
+
         private var url: String? = null
 
         override fun setPhoto(item: PhotoItem) = with(vb) {
@@ -58,9 +60,12 @@ class GalleryAdapter(
                 source.cancelLoad(it)
             }
             tvTitle.text = item.title
-            ivPhoto.setImageResource(R.drawable.load_photo)
             url = item.urlMini
             source.getInnerImage(item.urlMini, this@ViewHolder)
+        }
+
+        override fun startLoading() {
+            vb.ivPhoto.setImageResource(R.drawable.load_photo)
         }
 
         override fun onImageLoaded(bitmap: Bitmap) {
