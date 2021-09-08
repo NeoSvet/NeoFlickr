@@ -34,7 +34,7 @@ class GalleryPresenter(
             presenter.stop()
             lastClickedPos = item.pos
             val photo = photos[item.pos]
-            router.navigateTo(PhotoScreen.create(photo.id))
+            router.navigateTo(PhotoScreen.create(photo.id, photo.urlMini))
         }
 
         override fun bindView(view: IGalleryItemView) {

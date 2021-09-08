@@ -47,13 +47,16 @@ class PhotoPresenter(
         }
     }
 
-    fun load(photoId: String) {
+    fun load(photoId: String, urlMini: String? = null) {
         viewState.showLoading()
         action = MyAction(
             type = MyAction.Type.PHOTO,
             sArg = photoId,
             iArg = 0
         )
+        urlMini?.let {
+            image.getInnerImage(it, this)
+        }
         process = photo.getUrlBig(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())

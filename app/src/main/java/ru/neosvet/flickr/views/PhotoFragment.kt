@@ -28,12 +28,14 @@ import javax.inject.Inject
 class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
     companion object {
         private const val ARG_PHOTO = "photo"
+        private const val ARG_URL_MINI = "url_mini"
 
         @JvmStatic
-        fun newInstance(photoId: String) =
+        fun newInstance(photoId: String, urlMini: String) =
             PhotoFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PHOTO, photoId)
+                    putString(ARG_URL_MINI, urlMini)
                 }
             }
     }
@@ -90,7 +92,8 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         arguments?.let {
             it.getString(ARG_PHOTO)?.let { id ->
                 photoId = id
-                presenter.load(id)
+                val url = it.getString(ARG_URL_MINI)
+                presenter.load(id, url)
             }
         }
 
