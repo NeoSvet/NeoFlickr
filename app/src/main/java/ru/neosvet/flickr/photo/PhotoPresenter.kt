@@ -49,7 +49,7 @@ class PhotoPresenter(
     }
 
     fun load(photoId: String, urlMini: String? = null) {
-        viewState.showLoading()
+        startLoading()
         action = MyAction(
             type = MyAction.Type.PHOTO,
             sArg = photoId,
@@ -68,12 +68,13 @@ class PhotoPresenter(
     }
 
     private fun loadUrl(url: String) {
+        startLoading()
         if (url.isNotEmpty())
             image.getOuterImage(url, this)
     }
 
     fun getInfo(photoId: String) {
-        viewState.showLoading()
+        startLoading()
         action = MyAction(
             type = MyAction.Type.INFO,
             sArg = photoId,
