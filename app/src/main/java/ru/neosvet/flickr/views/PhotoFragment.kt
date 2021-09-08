@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -13,6 +12,7 @@ import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
+import ru.neosvet.flickr.abs.getTranslateMessage
 import ru.neosvet.flickr.abs.showMessageRetry
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
 import ru.neosvet.flickr.image.PRDnlrImageLoader
@@ -164,7 +164,7 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
     override fun showError(t: Throwable) {
         t.printStackTrace()
         vb?.run {
-            showMessageRetry(root, t.message.toString()) {
+            showMessageRetry(root, getTranslateMessage(t)) {
                 bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
                 presenter.retryLastAction()
             }

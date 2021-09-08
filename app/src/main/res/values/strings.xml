@@ -16,4 +16,5 @@
     <string name="clear_thumbs">Очистить кэш миниатюр</string>
     <string name="about_access_storage">Доступ к памяти нужен для того, чтобы фото сохранялись в галереи.</string>
     <string name="retry">Повторить</string>
+    <string name="no_connection">Нет подключения к интернету</string>
 </resources>

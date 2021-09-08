@@ -3,14 +3,13 @@ package ru.neosvet.flickr.views
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.terrakok.cicerone.Router
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
+import ru.neosvet.flickr.abs.getTranslateMessage
 import ru.neosvet.flickr.abs.showMessageRetry
 import ru.neosvet.flickr.databinding.FragmentGalleryBinding
 import ru.neosvet.flickr.gallery.GalleryPresenter
@@ -161,7 +160,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
         vb?.lProgress?.visibility = View.GONE
         t.printStackTrace()
         vb?.run {
-            showMessageRetry(root, t.message.toString()) {
+            showMessageRetry(root, getTranslateMessage(t)) {
                 presenter.retryLastAction()
             }
         }
