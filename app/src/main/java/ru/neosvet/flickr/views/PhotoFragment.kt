@@ -1,8 +1,11 @@
 package ru.neosvet.flickr.views
 
+import android.content.Intent
 import android.graphics.Bitmap
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.view.*
+import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +26,7 @@ import ru.neosvet.flickr.photo.PhotoView
 import ru.neosvet.flickr.photo.TitleIds
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.storage.FlickrStorage
+import java.io.File
 import javax.inject.Inject
 
 class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
@@ -137,6 +141,27 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         vb?.run {
             lProgress.visibility = View.GONE
             zoomingView.setImage(ImageSource.bitmap(bitmap))
+        }
+    }
+
+    override fun setVideo(file: File) {
+        vb?.run {
+            lProgress.visibility = View.GONE
+            ivPlay.visibility = View.VISIBLE
+            ivPlay.setOnClickListener {
+                try {
+                    val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+                    MediaScannerConnection.scanFile(
+                        context, arrayOf(file.toString()), arrayOf(mime)
+                    ) { path, uri ->
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.setDataAndType(uri, mime)
+                        startActivity(intent)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
     }
 

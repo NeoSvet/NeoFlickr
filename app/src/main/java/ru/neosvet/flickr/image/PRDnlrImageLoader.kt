@@ -48,10 +48,17 @@ object PRDnlrImageLoader : IImageLoader {
     private fun onFinish(url: String, file: File, receiver: ImageReceiver) {
         tasks.remove(url)
         val f = File(folder.toString() + "/" + file.name)
-        val options = BitmapFactory.Options()
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888
-        val bitmap = BitmapFactory.decodeFile(f.toString(), options)
-        receiver.onImageLoaded(bitmap)
+        if (url.contains(".jpg")) {
+            val options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            val bitmap = BitmapFactory.decodeFile(f.toString(), options)
+            receiver.onImageLoaded(bitmap)
+        } else { //is video
+            val s = file.toString()
+            val video = File(s.substring(0, s.length - 3) + "mp4")
+            f.copyTo(video)
+            receiver.onVideoLoaded(video)
+        }
         f.delete()
     }
 

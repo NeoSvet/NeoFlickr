@@ -10,6 +10,7 @@ import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.storage.FlickrStorage
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.util.*
 
@@ -43,15 +44,32 @@ class ImageSource(
         if (!f.exists())
             f.mkdir()
 
-        storage.imageDao.get(url)
-            .observeOn(schedulers.main())
-            .subscribeOn(schedulers.background())
-            .map(this::openBitmap)
-            .subscribe(
-                receiver::onImageLoaded
-            ) {
-                startLoad(url, path, receiver)
-            }
+        if (url.contains(".jpg")) {
+            storage.imageDao.get(url)
+                .observeOn(schedulers.main())
+                .subscribeOn(schedulers.background())
+                .map(this::openBitmap)
+                .subscribe(
+                    receiver::onImageLoaded
+                ) {
+                    startLoad(url, path, receiver)
+                }
+        } else { //is video
+            storage.imageDao.get(url)
+                .observeOn(schedulers.main())
+                .subscribeOn(schedulers.background())
+                .map(this::openFile)
+                .subscribe(
+                    receiver::onVideoLoaded,
+                ) {
+                    startLoad(url, path, receiver)
+                }
+        }
+    }
+
+    private fun openFile(item: ImageItem) = File(item.path).also {
+        if (!it.exists())
+            throw FileNotFoundException()
     }
 
     private fun openBitmap(image: ImageItem): Bitmap {
@@ -62,6 +80,13 @@ class ImageSource(
 
     override fun save(from: Bitmap, to: ImageItem) {
         saveImage(from, to)
+            .observeOn(schedulers.main())
+            .subscribeOn(schedulers.background())
+            .subscribe()
+    }
+
+    override fun saveItem(item: ImageItem) {
+        storage.imageDao.insert(item)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
             .subscribe()
@@ -91,10 +116,7 @@ class ImageSource(
                 context, arrayOf(file.toString()), null
             ) { path, uri -> }
 
-        storage.imageDao.insert(image)
-            .observeOn(schedulers.main())
-            .subscribeOn(schedulers.background())
-            .subscribe()
+        saveItem(image)
     }
 
 }

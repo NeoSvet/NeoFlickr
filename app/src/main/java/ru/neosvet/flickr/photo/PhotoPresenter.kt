@@ -9,6 +9,7 @@ import ru.neosvet.flickr.entities.InfoItem
 import ru.neosvet.flickr.image.IImageSource
 import ru.neosvet.flickr.image.ImageReceiver
 import ru.neosvet.flickr.scheduler.Schedulers
+import java.io.File
 
 class PhotoPresenter(
     private val titleIds: TitleIds,
@@ -113,6 +114,18 @@ class PhotoPresenter(
         viewState.setImage(bitmap)
         saveAs?.let {
             image.save(bitmap, it)
+        }
+    }
+
+    override fun onVideoLoaded(file: File) {
+        viewState.setVideo(file)
+        saveAs?.let {
+            image.saveItem(
+                ImageItem(
+                    url = it.url,
+                    path = file.toString()
+                )
+            )
         }
     }
 

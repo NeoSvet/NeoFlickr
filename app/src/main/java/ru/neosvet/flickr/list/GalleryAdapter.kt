@@ -77,6 +77,9 @@ class GalleryAdapter(
             updateSize(bitmap.width, bitmap.height)
         }
 
+        override fun onVideoLoaded(file: File) {
+        }
+
         private fun updateSize(width: Int, height: Int) {
             val r = if (orientation == Orientation.LANDSCAPE)
                 getSize(vb).y.toFloat() / height

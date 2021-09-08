@@ -31,7 +31,6 @@ class PhotoSource @Inject constructor(
         }
     }
 
-
     private fun getSize(photoId: String) =
         storage.photoDao.get(photoId).map {
             it.urlBig ?: ""
@@ -62,8 +61,12 @@ class PhotoSource @Inject constructor(
     private fun findUrlBiggest(list: List<Size>): String {
         var max = list[0]
         list.forEach {
-            if (max.width < it.width && it.label != "Original")
-                max = it
+            if (it.label != "Original" && it.label != "Video Player") {
+                if (max.media != it.media && it.media == "video")
+                    max = it
+                else if (max.width < it.width)
+                    max = it
+            }
         }
         return max.source
     }

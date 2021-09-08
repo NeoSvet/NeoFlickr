@@ -5,10 +5,12 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
 import moxy.viewstate.strategy.alias.Skip
+import java.io.File
 
 @AddToEndSingle
 interface PhotoView : MvpView {
     fun setImage(bitmap: Bitmap)
+    fun setVideo(file: File)
     @Skip
     fun setNoPhoto()
     fun updateInfo()
