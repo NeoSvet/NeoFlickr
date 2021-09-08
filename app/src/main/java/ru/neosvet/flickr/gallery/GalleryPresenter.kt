@@ -1,10 +1,10 @@
 package ru.neosvet.flickr.gallery
 
-import android.util.Log
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
+import ru.neosvet.flickr.abs.MyAction
 import ru.neosvet.flickr.entities.GalleryItem
 import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.scheduler.Schedulers
@@ -47,6 +47,7 @@ class GalleryPresenter(
 
     val galleryListPresenter = GalleryListPresenter(router, this)
     private var process: Disposable? = null
+    private var action: MyAction? = null
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -54,7 +55,21 @@ class GalleryPresenter(
         loadHome()
     }
 
+    fun retryLastAction() {
+        action?.let {
+            when (it.type) {
+                MyAction.Type.GALLERY -> loadHome(it.iArg)
+                MyAction.Type.SEARCH -> search(it.sArg, it.iArg)
+            }
+        } ?: loadHome()
+    }
+
     fun loadHome(page: Int = 1) {
+        action = MyAction(
+            type = MyAction.Type.GALLERY,
+            sArg = "",
+            iArg = page
+        )
         startLoading()
         when (settings.getGalleryType()) {
             GalleryType.Popular -> loadPopular(page)
@@ -70,8 +85,7 @@ class GalleryPresenter(
     }
 
     override fun onDestroy() {
-        Log.d("mylog", "onDestroy")
-        process?.dispose()
+        stop()
     }
 
     fun stop() {
@@ -106,6 +120,11 @@ class GalleryPresenter(
 
     fun search(query: String, page: Int = 1) {
         startLoading()
+        action = MyAction(
+            type = MyAction.Type.SEARCH,
+            sArg = query,
+            iArg = page
+        )
         this.query = query
         process = source.getSearch(query, page)
             .subscribeOn(schedulers.background())

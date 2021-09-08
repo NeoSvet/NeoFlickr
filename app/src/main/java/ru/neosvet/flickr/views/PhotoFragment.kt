@@ -13,6 +13,7 @@ import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.BackEvent
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
+import ru.neosvet.flickr.abs.showMessageRetry
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
 import ru.neosvet.flickr.image.PRDnlrImageLoader
 import ru.neosvet.flickr.list.InfoAdapter
@@ -162,7 +163,12 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
 
     override fun showError(t: Throwable) {
         t.printStackTrace()
-        Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
+        vb?.run {
+            showMessageRetry(root, t.message.toString()) {
+                bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
+                presenter.retryLastAction()
+            }
+        }
     }
 
     override fun back(): Boolean {

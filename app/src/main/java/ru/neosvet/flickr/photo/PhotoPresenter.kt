@@ -3,6 +3,7 @@ package ru.neosvet.flickr.photo
 import android.graphics.Bitmap
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
+import ru.neosvet.flickr.abs.MyAction
 import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.InfoItem
 import ru.neosvet.flickr.image.IImageSource
@@ -31,13 +32,28 @@ class PhotoPresenter(
     val infoListPresenter = InfoListPresenter()
     private var process: Disposable? = null
     private var sizes: String? = null
+    private var action: MyAction? = null
 
     override fun onDestroy() {
         process?.dispose()
     }
 
+    fun retryLastAction() {
+        action?.let {
+            when (it.type) {
+                MyAction.Type.PHOTO -> load(it.sArg)
+                MyAction.Type.INFO -> getInfo(it.sArg)
+            }
+        }
+    }
+
     fun load(photoId: String) {
         viewState.showLoading()
+        action = MyAction(
+            type = MyAction.Type.PHOTO,
+            sArg = photoId,
+            iArg = 0
+        )
         process = photo.getUrlBig(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
@@ -54,6 +70,11 @@ class PhotoPresenter(
 
     fun getInfo(photoId: String) {
         viewState.showLoading()
+        action = MyAction(
+            type = MyAction.Type.INFO,
+            sArg = photoId,
+            iArg = 0
+        )
         process = photo.getInfo(photoId)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())

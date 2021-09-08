@@ -7,9 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.terrakok.cicerone.Router
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
+import ru.neosvet.flickr.abs.showMessageRetry
 import ru.neosvet.flickr.databinding.FragmentGalleryBinding
 import ru.neosvet.flickr.gallery.GalleryPresenter
 import ru.neosvet.flickr.gallery.GalleryView
@@ -158,7 +160,11 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     override fun showError(t: Throwable) {
         vb?.lProgress?.visibility = View.GONE
         t.printStackTrace()
-        Toast.makeText(requireContext(), t.message, Toast.LENGTH_LONG).show()
+        vb?.run {
+            showMessageRetry(root, t.message.toString()) {
+                presenter.retryLastAction()
+            }
+        }
     }
 
     override fun onDestroyView() {
