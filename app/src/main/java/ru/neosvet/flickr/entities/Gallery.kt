@@ -5,47 +5,47 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class GalleryResponse(
-    @SerializedName("gallery") var gallery: Gallery?,
-    @SerializedName("stat") var stat: String,
-    @SerializedName("message") var message: String?
+    @SerializedName("gallery") val gallery: Gallery?,
+    @SerializedName("stat") val stat: String,
+    @SerializedName("message") val message: String?
 )
 
 data class Gallery(
-    @SerializedName("id") var id: String,
-    @SerializedName("gallery_id") var galleryId: String,
-    @SerializedName("url") var url: String,
-    @SerializedName("owner") var owner: String,
-    @SerializedName("username") var username: String,
-    @SerializedName("iconserver") var iconserver: String,
-    @SerializedName("iconfarm") var iconfarm: Int,
-    @SerializedName("primary_photo_id") var primaryPhotoId: String,
-    @SerializedName("date_create") var dateCreate: String,
-    @SerializedName("date_update") var dateUpdate: String,
-    @SerializedName("count_photos") var countPhotos: Int,
-    @SerializedName("count_videos") var countVideos: Int,
-    @SerializedName("count_total") var countTotal: Int,
-    @SerializedName("count_views") var countViews: Int,
-    @SerializedName("count_comments") var countComments: Int,
-    @SerializedName("title") var title: StringContent,
-    @SerializedName("description") var description: StringContent,
-    @SerializedName("sort_group") var sortGroup: String,
-    @SerializedName("cover_photos") var coverPhotos: CoverPhotos,
-    @SerializedName("current_state") var currentState: String,
-    @SerializedName("primary_photo_server") var primaryPhotoServer: String,
-    @SerializedName("primary_photo_farm") var primaryPhotoFarm: Int,
-    @SerializedName("primary_photo_secret") var primaryPhotoSecret: String
+    @SerializedName("id") val id: String,
+    @SerializedName("gallery_id") val galleryId: String,
+    @SerializedName("url") val url: String,
+    @SerializedName("owner") val owner: String,
+    @SerializedName("username") val username: String,
+    @SerializedName("iconserver") val iconserver: String,
+    @SerializedName("iconfarm") val iconfarm: Int,
+    @SerializedName("primary_photo_id") val primaryPhotoId: String,
+    @SerializedName("date_create") val dateCreate: String,
+    @SerializedName("date_update") val dateUpdate: String,
+    @SerializedName("count_photos") val countPhotos: Int,
+    @SerializedName("count_videos") val countVideos: Int,
+    @SerializedName("count_total") val countTotal: Int,
+    @SerializedName("count_views") val countViews: Int,
+    @SerializedName("count_comments") val countComments: Int,
+    @SerializedName("title") val title: StringContent,
+    @SerializedName("description") val description: StringContent,
+    @SerializedName("sort_group") val sortGroup: String,
+    @SerializedName("cover_photos") val coverPhotos: CoverPhotos,
+    @SerializedName("current_state") val currentState: String,
+    @SerializedName("primary_photo_server") val primaryPhotoServer: String,
+    @SerializedName("primary_photo_farm") val primaryPhotoFarm: Int,
+    @SerializedName("primary_photo_secret") val primaryPhotoSecret: String
 )
 
 data class CoverPhotos(
-    @SerializedName("photo") var photo: List<CoverPhoto>
+    @SerializedName("photo") val photo: List<CoverPhoto>
 )
 
 data class CoverPhoto(
-    @SerializedName("url") var url: String,
-    @SerializedName("width") var width: Int,
-    @SerializedName("height") var height: Int,
-    @SerializedName("is_primary") var isPrimary: Int,
-    @SerializedName("is_video") var isVideo: Int
+    @SerializedName("url") val url: String,
+    @SerializedName("width") val width: Int,
+    @SerializedName("height") val height: Int,
+    @SerializedName("is_primary") val isPrimary: Int,
+    @SerializedName("is_video") val isVideo: Int
 )
 
 @Entity(tableName = "Gallery")

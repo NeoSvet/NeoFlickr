@@ -3,13 +3,13 @@ package ru.neosvet.flickr.entities
 import com.google.gson.annotations.SerializedName
 
 data class UserResponse (
-    @SerializedName("user") var user : User?,
-    @SerializedName("stat") var stat : String,
-    @SerializedName("message") var message: String?
+    @SerializedName("user") val user : User?,
+    @SerializedName("stat") val stat : String,
+    @SerializedName("message") val message: String?
 )
 
 data class User (
-    @SerializedName("id") var id : String,
-    @SerializedName("nsid") var nsid : String,
-    @SerializedName("username") var username : StringContent
+    @SerializedName("id") val id : String,
+    @SerializedName("nsid") val nsid : String,
+    @SerializedName("username") val username : StringContent
 )

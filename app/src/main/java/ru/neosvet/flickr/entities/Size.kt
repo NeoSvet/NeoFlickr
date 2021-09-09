@@ -3,23 +3,23 @@ package ru.neosvet.flickr.entities
 import com.google.gson.annotations.SerializedName
 
 data class SizesResponse (
-    @SerializedName("sizes") var sizes : Sizes?,
-    @SerializedName("stat") var stat : String,
-    @SerializedName("message") var message: String?
+    @SerializedName("sizes") val sizes : Sizes?,
+    @SerializedName("stat") val stat : String,
+    @SerializedName("message") val message: String?
 )
 
 data class Sizes (
-    @SerializedName("canblog") var canblog : Int,
-    @SerializedName("canprint") var canprint : Int,
-    @SerializedName("candownload") var candownload : Int,
-    @SerializedName("size") var size : List<Size>
+    @SerializedName("canblog") val canblog : Int,
+    @SerializedName("canprint") val canprint : Int,
+    @SerializedName("candownload") val candownload : Int,
+    @SerializedName("size") val size : List<Size>
 )
 
 data class Size (
-    @SerializedName("label") var label : String,
-    @SerializedName("width") var width : Int,
-    @SerializedName("height") var height : Int,
-    @SerializedName("source") var source : String,
-    @SerializedName("url") var url : String,
-    @SerializedName("media") var media : String
+    @SerializedName("label") val label : String,
+    @SerializedName("width") val width : Int,
+    @SerializedName("height") val height : Int,
+    @SerializedName("source") val source : String,
+    @SerializedName("url") val url : String,
+    @SerializedName("media") val media : String
 )

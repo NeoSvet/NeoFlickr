@@ -6,127 +6,127 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class InfoResponse (
-    @SerializedName("photo") var photo : PhotoInfo?,
-    @SerializedName("stat") var stat : String,
-    @SerializedName("message") var message: String?
+    @SerializedName("photo") val photo : PhotoInfo?,
+    @SerializedName("stat") val stat : String,
+    @SerializedName("message") val message: String?
 )
 
 data class PhotoInfo (
-    @SerializedName("id") var id : String,
-    @SerializedName("secret") var secret : String,
-    @SerializedName("server") var server : String,
-    @SerializedName("farm") var farm : Int,
-    @SerializedName("dateuploaded") var dateuploaded : String,
-    @SerializedName("isfavorite") var isfavorite : Int,
-    @SerializedName("license") var license : String,
-    @SerializedName("safety_level") var safetyLevel : String,
-    @SerializedName("rotation") var rotation : Int,
-    @SerializedName("owner") var owner : Owner,
-    @SerializedName("title") var title : StringContent,
-    @SerializedName("description") var description : StringContent,
-    @SerializedName("visibility") var visibility : Visibility,
-    @SerializedName("dates") var dates : Dates,
-    @SerializedName("views") var views : String,
-    @SerializedName("editability") var editability : Canability,
-    @SerializedName("publiceditability") var publiceditability : Canability,
-    @SerializedName("usage") var usage : Usage,
-    @SerializedName("comments") var comments : StringContent,
-    @SerializedName("notes") var notes : Notes,
-    @SerializedName("people") var people : People,
-    @SerializedName("tags") var tags : Tags,
-    @SerializedName("location") var location : Location,
-    @SerializedName("geoperms") var geoperms : Geoperms,
-    @SerializedName("urls") var urls : Urls,
-    @SerializedName("media") var media : String
+    @SerializedName("id") val id : String,
+    @SerializedName("secret") val secret : String,
+    @SerializedName("server") val server : String,
+    @SerializedName("farm") val farm : Int,
+    @SerializedName("dateuploaded") val dateuploaded : String,
+    @SerializedName("isfavorite") val isfavorite : Int,
+    @SerializedName("license") val license : String,
+    @SerializedName("safety_level") val safetyLevel : String,
+    @SerializedName("rotation") val rotation : Int,
+    @SerializedName("owner") val owner : Owner,
+    @SerializedName("title") val title : StringContent,
+    @SerializedName("description") val description : StringContent,
+    @SerializedName("visibility") val visibility : Visibility,
+    @SerializedName("dates") val dates : Dates,
+    @SerializedName("views") val views : String,
+    @SerializedName("editability") val editability : Canability,
+    @SerializedName("publiceditability") val publiceditability : Canability,
+    @SerializedName("usage") val usage : Usage,
+    @SerializedName("comments") val comments : StringContent,
+    @SerializedName("notes") val notes : Notes,
+    @SerializedName("people") val people : People,
+    @SerializedName("tags") val tags : Tags,
+    @SerializedName("location") val location : Location,
+    @SerializedName("geoperms") val geoperms : Geoperms,
+    @SerializedName("urls") val urls : Urls,
+    @SerializedName("media") val media : String
 )
 
 data class Owner (
-    @SerializedName("nsid") var nsid : String,
-    @SerializedName("username") var username : String,
-    @SerializedName("realname") var realname : String,
-    @SerializedName("location") var location : String,
-    @SerializedName("iconserver") var iconserver : String,
-    @SerializedName("iconfarm") var iconfarm : Int,
-    @SerializedName("path_alias") var pathAlias : String
+    @SerializedName("nsid") val nsid : String,
+    @SerializedName("username") val username : String,
+    @SerializedName("realname") val realname : String,
+    @SerializedName("location") val location : String,
+    @SerializedName("iconserver") val iconserver : String,
+    @SerializedName("iconfarm") val iconfarm : Int,
+    @SerializedName("path_alias") val pathAlias : String
 )
 
 data class StringContent (
-    @SerializedName("_content") var content : String
+    @SerializedName("_content") val content : String
 )
 
 data class Visibility (
-    @SerializedName("ispublic") var ispublic : Int,
-    @SerializedName("isfriend") var isfriend : Int,
-    @SerializedName("isfamily") var isfamily : Int
+    @SerializedName("ispublic") val ispublic : Int,
+    @SerializedName("isfriend") val isfriend : Int,
+    @SerializedName("isfamily") val isfamily : Int
 )
 
 data class Dates (
-    @SerializedName("posted") var posted : String,
-    @SerializedName("taken") var taken : String,
-    @SerializedName("takengranularity") var takengranularity : String,
-    @SerializedName("takenunknown") var takenunknown : String,
-    @SerializedName("lastupdate") var lastupdate : String
+    @SerializedName("posted") val posted : String,
+    @SerializedName("taken") val taken : String,
+    @SerializedName("takengranularity") val takengranularity : String,
+    @SerializedName("takenunknown") val takenunknown : String,
+    @SerializedName("lastupdate") val lastupdate : String
 )
 
 data class Canability (
-    @SerializedName("cancomment") var cancomment : Int,
-    @SerializedName("canaddmeta") var canaddmeta : Int
+    @SerializedName("cancomment") val cancomment : Int,
+    @SerializedName("canaddmeta") val canaddmeta : Int
 )
 
 data class Usage (
-    @SerializedName("candownload") var candownload : Int,
-    @SerializedName("canblog") var canblog : Int,
-    @SerializedName("canprint") var canprint : Int,
-    @SerializedName("canshare") var canshare : Int
+    @SerializedName("candownload") val candownload : Int,
+    @SerializedName("canblog") val canblog : Int,
+    @SerializedName("canprint") val canprint : Int,
+    @SerializedName("canshare") val canshare : Int
 )
 
 data class Notes (
-    @SerializedName("note") var note : List<String>
+    @SerializedName("note") val note : List<String>
 )
 
 data class People (
-    @SerializedName("haspeople") var haspeople : Int
+    @SerializedName("haspeople") val haspeople : Int
 )
 
 data class Tag (
-    @SerializedName("id") var id : String,
-    @SerializedName("author") var author : String,
-    @SerializedName("authorname") var authorname : String,
-    @SerializedName("raw") var raw : String,
-    @SerializedName("_content") var content : String,
-    //@SerializedName("machine_tag") var machineTag : Int or Boolean
+    @SerializedName("id") val id : String,
+    @SerializedName("author") val author : String,
+    @SerializedName("authorname") val authorname : String,
+    @SerializedName("raw") val raw : String,
+    @SerializedName("_content") val content : String,
+    //@SerializedName("machine_tag") val machineTag : Int or Boolean
 )
 
 data class Tags (
-    @SerializedName("tag") var tag : List<Tag>
+    @SerializedName("tag") val tag : List<Tag>
 )
 
 data class Location (
-    @SerializedName("latitude") var latitude : String,
-    @SerializedName("longitude") var longitude : String,
-    @SerializedName("accuracy") var accuracy : String,
-    @SerializedName("context") var context : String,
-    @SerializedName("locality") var locality : StringContent,
-    @SerializedName("county") var county : StringContent,
-    @SerializedName("region") var region : StringContent,
-    @SerializedName("country") var country : StringContent,
-    @SerializedName("neighbourhood") var neighbourhood : StringContent
+    @SerializedName("latitude") val latitude : String,
+    @SerializedName("longitude") val longitude : String,
+    @SerializedName("accuracy") val accuracy : String,
+    @SerializedName("context") val context : String,
+    @SerializedName("locality") val locality : StringContent,
+    @SerializedName("county") val county : StringContent,
+    @SerializedName("region") val region : StringContent,
+    @SerializedName("country") val country : StringContent,
+    @SerializedName("neighbourhood") val neighbourhood : StringContent
 )
 
 data class Geoperms (
-    @SerializedName("ispublic") var ispublic : Int,
-    @SerializedName("iscontact") var iscontact : Int,
-    @SerializedName("isfriend") var isfriend : Int,
-    @SerializedName("isfamily") var isfamily : Int
+    @SerializedName("ispublic") val ispublic : Int,
+    @SerializedName("iscontact") val iscontact : Int,
+    @SerializedName("isfriend") val isfriend : Int,
+    @SerializedName("isfamily") val isfamily : Int
 )
 
 data class Url (
-    @SerializedName("type") var type : String,
-    @SerializedName("_content") var content : String
+    @SerializedName("type") val type : String,
+    @SerializedName("_content") val content : String
 )
 
 data class Urls (
-    @SerializedName("url") var url : List<Url>
+    @SerializedName("url") val url : List<Url>
 )
 
 @Entity(
