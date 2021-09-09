@@ -12,5 +12,7 @@ interface GalleryView : MvpView {
     fun updateGallery()
     fun updatePages(page: Int, pages: Int)
     @Skip
+    fun galleryIsEmpty()
+    @Skip
     fun showError(t: Throwable)
 }

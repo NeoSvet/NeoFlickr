@@ -6,6 +6,7 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.terrakok.cicerone.Router
+import com.google.android.material.snackbar.Snackbar
 import moxy.ktx.moxyPresenter
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.abs.AbsFragment
@@ -153,6 +154,21 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
             adPage?.setPages(page, pages)
             adPage?.notifyDataSetChanged()
             vb?.rvPages?.scrollToPosition(page - 1)
+        }
+    }
+
+    override fun galleryIsEmpty() {
+        vb?.lProgress?.visibility = View.GONE
+        adGallery?.notifyDataSetChanged()
+        updatePages(1,1)
+
+        vb?.run {
+            Snackbar.make(
+                root,
+                getString(R.string.gallery_is_empty),
+                Snackbar.LENGTH_INDEFINITE
+            )
+                .show()
         }
     }
 

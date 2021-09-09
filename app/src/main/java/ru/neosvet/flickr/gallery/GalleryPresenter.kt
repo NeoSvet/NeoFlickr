@@ -146,6 +146,11 @@ class GalleryPresenter(
     private fun getList() = galleryListPresenter.photos
 
     private fun putPhotos(list: List<PhotoItem>) {
+        if (list.size == 0) {
+            getList().clear()
+            viewState.galleryIsEmpty()
+            return
+        }
         viewState.updatePages(source.currentPage, source.currentPages)
 
         if (getList() == list)
