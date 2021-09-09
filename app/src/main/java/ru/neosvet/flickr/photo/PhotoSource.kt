@@ -1,6 +1,7 @@
 package ru.neosvet.flickr.photo
 
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.api.Client
 import ru.neosvet.flickr.entities.*
@@ -36,15 +37,16 @@ class PhotoSource @Inject constructor(
             it.urlBig ?: ""
         }.toObservable()
 
-    private fun loadSize(photoId: String): Observable<String> =
-        api.getSizes(photoId)
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
-            }
-            .map(this::parseSizes)
-            .toObservable()
+    private fun loadSize(photoId: String): Observable<String> = api.getSizes(photoId)
+        .flatMap {
+            if (it.stat == "fail")
+                Single.error(Exception(it.message))
+            else
+                Single.just(it)
+        }
+        .map(this::parseSizes)
+        .toObservable()
+
 
     private fun parseSizes(response: SizesResponse): String {
         response.sizes?.size?.let {
@@ -84,10 +86,11 @@ class PhotoSource @Inject constructor(
 
     private fun loadInfo(photoId: String): Observable<InfoItem> =
         api.getInfo(photoId)
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
+            .flatMap {
+                if (it.stat == "fail")
+                    Single.error(Exception(it.message))
+                else
+                    Single.just(it)
             }
             .map(this::parseInfo)
             .toObservable()

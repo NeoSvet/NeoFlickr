@@ -1,6 +1,7 @@
 package ru.neosvet.flickr.gallery
 
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.api.Client
 import ru.neosvet.flickr.entities.GalleryItem
@@ -52,10 +53,9 @@ class GallerySource @Inject constructor(
 
     private fun loadPopular(userId: String, page: Int): Observable<GalleryItem> =
         api.getPopular(userId, page)
-            .map(this::checkFail)
+            .flatMap(this::checkFail)
             .map(this::parseResponse)
             .toObservable()
-
 
     override fun getGallery(galleryId: String, page: Int): Observable<GalleryItem> {
         currentName = galleryId + PAGE + page
@@ -73,7 +73,7 @@ class GallerySource @Inject constructor(
 
     private fun loadGallery(galleryId: String, page: Int): Observable<GalleryItem> =
         api.getGallery(galleryId, page)
-            .map(this::checkFail)
+            .flatMap(this::checkFail)
             .map(this::parseResponse)
             .toObservable()
 
@@ -88,15 +88,15 @@ class GallerySource @Inject constructor(
 
     private fun loadSearch(query: String, page: Int): Observable<GalleryItem> =
         api.searchImages(query, page)
-            .map(this::checkFail)
+            .flatMap(this::checkFail)
             .map(this::parseResponse)
             .toObservable()
 
-    private fun checkFail(response: PhotosResponse): PhotosResponse {
-        if (response.stat.equals("fail"))
-            throw Exception(response.message)
-        return response
-    }
+    private fun checkFail(response: PhotosResponse): Single<PhotosResponse> =
+        if (response.stat == "fail")
+            Single.error(Exception(response.message))
+        else
+            Single.just(response)
 
     private fun parseResponse(response: PhotosResponse): GalleryItem {
         val photoIds = StringBuilder()

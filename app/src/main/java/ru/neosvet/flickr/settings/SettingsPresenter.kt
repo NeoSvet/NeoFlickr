@@ -1,6 +1,7 @@
 package ru.neosvet.flickr.settings
 
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
 import ru.neosvet.flickr.entities.GalleryResponse
@@ -54,10 +55,11 @@ class SettingsPresenter(
         process = source.findUser(user_name)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
+            .flatMap {
+                if (it.stat == "fail")
+                    Single.error(Exception(it.message))
+                else
+                    Single.just(it)
             }
             .subscribe(
                 this::parseUser,
@@ -78,10 +80,11 @@ class SettingsPresenter(
         process = source.findGallery(gallery_url)
             .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
-            .map {
-                if (it.stat.equals("fail"))
-                    throw Exception(it.message)
-                it
+            .flatMap {
+                if (it.stat == "fail")
+                    Single.error(Exception(it.message))
+                else
+                    Single.just(it)
             }
             .subscribe(
                 this::parseGallery,
