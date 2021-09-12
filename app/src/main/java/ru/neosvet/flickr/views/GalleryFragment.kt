@@ -17,9 +17,9 @@ import ru.neosvet.flickr.gallery.GalleryPresenter
 import ru.neosvet.flickr.gallery.GalleryView
 import ru.neosvet.flickr.gallery.IGallerySource
 import ru.neosvet.flickr.image.ImageSource
-import ru.neosvet.flickr.image.PRDnlrImageLoader
 import ru.neosvet.flickr.list.GalleryAdapter
 import ru.neosvet.flickr.list.PageAdapter
+import ru.neosvet.flickr.loader.PRDnlrLoader
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.settings.ISettings
 import ru.neosvet.flickr.storage.FlickrStorage
@@ -118,7 +118,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
             source = ImageSource(
                 context = requireContext(),
                 schedulers = schedulers,
-                loader = PRDnlrImageLoader,
+                loader = PRDnlrLoader,
                 storage = storage
             ),
             orientation = orientation
@@ -160,7 +160,7 @@ class GalleryFragment : AbsFragment(), GalleryView, PageAdapter.PageEvent {
     override fun galleryIsEmpty() {
         vb?.lProgress?.visibility = View.GONE
         adGallery?.notifyDataSetChanged()
-        updatePages(1,1)
+        updatePages(1, 1)
 
         vb?.run {
             Snackbar.make(

@@ -2,10 +2,9 @@ package ru.neosvet.flickr.views
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,7 @@ import ru.neosvet.flickr.abs.AbsFragment
 import ru.neosvet.flickr.abs.getTranslateMessage
 import ru.neosvet.flickr.abs.showMessageRetry
 import ru.neosvet.flickr.databinding.FragmentPhotoBinding
-import ru.neosvet.flickr.image.PRDnlrImageLoader
+import ru.neosvet.flickr.loader.PRDnlrLoader
 import ru.neosvet.flickr.list.InfoAdapter
 import ru.neosvet.flickr.photo.IPhotoSource
 import ru.neosvet.flickr.photo.PhotoPresenter
@@ -26,7 +25,6 @@ import ru.neosvet.flickr.photo.PhotoView
 import ru.neosvet.flickr.photo.TitleIds
 import ru.neosvet.flickr.scheduler.Schedulers
 import ru.neosvet.flickr.storage.FlickrStorage
-import java.io.File
 import javax.inject.Inject
 
 class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
@@ -70,7 +68,7 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
             image = ru.neosvet.flickr.image.ImageSource(
                 context = requireContext(),
                 schedulers = schedulers,
-                loader = PRDnlrImageLoader,
+                loader = PRDnlrLoader,
                 storage = storage
             ),
             schedulers = schedulers
@@ -144,20 +142,15 @@ class PhotoFragment : AbsFragment(), PhotoView, BackEvent {
         }
     }
 
-    override fun setVideo(file: File) {
+    override fun setVideo(uri: Uri) {
         vb?.run {
             lProgress.visibility = View.GONE
             ivPlay.visibility = View.VISIBLE
             ivPlay.setOnClickListener {
                 try {
-                    val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-                    MediaScannerConnection.scanFile(
-                        context, arrayOf(file.toString()), arrayOf(mime)
-                    ) { path, uri ->
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setDataAndType(uri, mime)
-                        startActivity(intent)
-                    }
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "video/mp4")
+                    startActivity(intent)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

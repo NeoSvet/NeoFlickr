@@ -1,6 +1,7 @@
 package ru.neosvet.flickr.photo
 
 import android.graphics.Bitmap
+import android.net.Uri
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
@@ -10,7 +11,7 @@ import java.io.File
 @AddToEndSingle
 interface PhotoView : MvpView {
     fun setImage(bitmap: Bitmap)
-    fun setVideo(file: File)
+    fun setVideo(uri: Uri)
     @Skip
     fun setNoPhoto()
     fun updateInfo()

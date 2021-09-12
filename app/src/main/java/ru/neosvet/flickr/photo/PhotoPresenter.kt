@@ -1,15 +1,14 @@
 package ru.neosvet.flickr.photo
 
 import android.graphics.Bitmap
+import android.net.Uri
 import io.reactivex.rxjava3.disposables.Disposable
 import moxy.MvpPresenter
 import ru.neosvet.flickr.abs.MyAction
-import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.InfoItem
 import ru.neosvet.flickr.image.IImageSource
 import ru.neosvet.flickr.image.ImageReceiver
 import ru.neosvet.flickr.scheduler.Schedulers
-import java.io.File
 
 class PhotoPresenter(
     private val titleIds: TitleIds,
@@ -49,7 +48,7 @@ class PhotoPresenter(
     }
 
     fun load(photoId: String, urlMini: String? = null) {
-        startLoading()
+        viewState.showLoading()
         action = MyAction(
             type = MyAction.Type.PHOTO,
             sArg = photoId,
@@ -68,13 +67,13 @@ class PhotoPresenter(
     }
 
     private fun loadUrl(url: String) {
-        startLoading()
+        viewState.showLoading()
         if (url.isNotEmpty())
             image.getOuterImage(url, this)
     }
 
     fun getInfo(photoId: String) {
-        startLoading()
+        viewState.showLoading()
         action = MyAction(
             type = MyAction.Type.INFO,
             sArg = photoId,
@@ -104,39 +103,22 @@ class PhotoPresenter(
         viewState.updateInfo()
     }
 
-    override var saveAs: ImageItem? = null
-
-    override fun startLoading() {
-        viewState.showLoading()
-    }
-
-    override fun onImageLoaded(bitmap: Bitmap) {
+    override fun onImageLoaded(url: String, bitmap: Bitmap) {
         sizes = "${bitmap.width} x ${bitmap.height}"
         viewState.setImage(bitmap)
-        saveAs?.let {
-            image.save(bitmap, it)
-        }
     }
 
-    override fun onVideoLoaded(file: File) {
-        viewState.setVideo(file)
-        saveAs?.let {
-            image.saveItem(
-                ImageItem(
-                    url = it.url,
-                    path = file.toString()
-                )
-            )
-        }
+    override fun onVideoLoaded(uri: Uri) {
+        sizes = null
+        viewState.setVideo(uri)
     }
 
-    override fun onImageFailed(t: Throwable) {
+    override fun onFailed(t: Throwable) {
         viewState.showError(t)
         viewState.setNoPhoto()
     }
 
-    override fun onLoadProgress(bytes: Long) {
-        val kb = bytes / 1024f
-        viewState.setLoadProgress(String.format("%.1f KB", kb))
+    override fun onLoadProgress(stat: String) {
+        viewState.setLoadProgress(stat)
     }
 }

@@ -1,14 +1,11 @@
 package ru.neosvet.flickr.image
 
 import android.graphics.Bitmap
-import ru.neosvet.flickr.entities.ImageItem
-import java.io.File
+import android.net.Uri
 
 interface ImageReceiver {
-    var saveAs: ImageItem?
-    fun startLoading()
-    fun onImageLoaded(bitmap: Bitmap)
-    fun onVideoLoaded(file: File)
-    fun onImageFailed(t: Throwable)
-    fun onLoadProgress(bytes: Long)
+    fun onImageLoaded(url: String, bitmap: Bitmap)
+    fun onVideoLoaded(uri: Uri)
+    fun onFailed(t: Throwable)
+    fun onLoadProgress(stat: String)
 }

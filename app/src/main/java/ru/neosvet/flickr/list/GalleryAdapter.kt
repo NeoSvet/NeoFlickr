@@ -2,19 +2,18 @@ package ru.neosvet.flickr.list
 
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.neosvet.flickr.R
 import ru.neosvet.flickr.databinding.ItemGalleryBinding
-import ru.neosvet.flickr.entities.ImageItem
 import ru.neosvet.flickr.entities.PhotoItem
 import ru.neosvet.flickr.gallery.IGalleryItemView
 import ru.neosvet.flickr.gallery.IGalleryListPresenter
 import ru.neosvet.flickr.image.IImageSource
 import ru.neosvet.flickr.image.ImageReceiver
 import ru.neosvet.flickr.views.Orientation
-import java.io.File
 
 class GalleryAdapter(
     private val presenter: IGalleryListPresenter,
@@ -51,33 +50,23 @@ class GalleryAdapter(
         RecyclerView.ViewHolder(vb.root),
         IGalleryItemView, ImageReceiver {
         override var pos = -1
-        override var saveAs: ImageItem? = null
-
-        private var url: String? = null
+        private var url = ""
 
         override fun setPhoto(item: PhotoItem) = with(vb) {
-            url?.let {
-                source.cancelLoad(it)
-            }
+            ivPhoto.setImageResource(R.drawable.load_photo)
             tvTitle.text = item.title
             url = item.urlMini
             source.getInnerImage(item.urlMini, this@ViewHolder)
         }
 
-        override fun startLoading() {
-            vb.ivPhoto.setImageResource(R.drawable.load_photo)
-        }
-
-        override fun onImageLoaded(bitmap: Bitmap) {
+        override fun onImageLoaded(url: String, bitmap: Bitmap) {
+            if (url != this.url)
+                return
             vb.ivPhoto.setImageBitmap(bitmap)
-            saveAs?.let {
-                source.save(bitmap, it)
-            }
-
             updateSize(bitmap.width, bitmap.height)
         }
 
-        override fun onVideoLoaded(file: File) {
+        override fun onVideoLoaded(uri: Uri) {
         }
 
         private fun updateSize(width: Int, height: Int) {
@@ -100,11 +89,11 @@ class GalleryAdapter(
             }
         }
 
-        override fun onImageFailed(t: Throwable) {
+        override fun onFailed(t: Throwable) {
             vb.ivPhoto.setImageResource(R.drawable.no_photo)
         }
 
-        override fun onLoadProgress(bytes: Long) {
+        override fun onLoadProgress(stat: String) {
         }
     }
 }

@@ -15,7 +15,7 @@ import ru.neosvet.flickr.entities.PhotoItem
         InfoItem::class,
         ImageItem::class
     ],
-    version = 2
+    version = 3
 )
 abstract class FlickrStorage : RoomDatabase() {
     abstract val galleryDao: GalleryDao
@@ -29,6 +29,7 @@ abstract class FlickrStorage : RoomDatabase() {
         fun get(context: Context) =
             Room.databaseBuilder(context, FlickrStorage::class.java, DB_NAME)
                 .addMigrations(Storage1to2Migration)
+                .addMigrations(Storage2to3Migration)
                 .build()
     }
 
