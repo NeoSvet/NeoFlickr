@@ -165,7 +165,7 @@ class GalleryPresenter(
             val newList = list.toMutableList()
             list.forEach {
                 val n = ids.indexOf(it.id)
-                if (n < newList.size)
+                if (n > -1 && n < newList.size)
                     newList[n] = it
             }
             newList
