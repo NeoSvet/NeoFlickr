@@ -3,21 +3,44 @@ package ru.neosvet.flickr.api
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.neosvet.flickr.FLICKR_API_KEY
-import ru.neosvet.flickr.USER_ID
-import ru.neosvet.flickr.entities.PhotosResponse
+import ru.neosvet.flickr.entities.*
 
 interface Client {
-    @GET("?method=flickr.photos.getPopular&format=json&nojsoncallback=1&user_id=$USER_ID&api_key=$FLICKR_API_KEY")
-    fun getPopular(): Single<PhotosResponse>
+    @GET("?method=flickr.urls.lookupGallery")
+    fun findGallery(
+        @Query("url") url: String
+    ): Single<GalleryResponse>
 
-    @GET("?method=flickr.galleries.getPhotos&format=json&nojsoncallback=1&api_key=$FLICKR_API_KEY")
-    fun getPhotos(
-        @Query("gallery_id") id: String
+    @GET("?method=flickr.people.findByUsername")
+    fun findUser(
+        @Query("username") username: String
+    ): Single<UserResponse>
+
+    @GET("?method=flickr.photos.getPopular&per_page=30")
+    fun getPopular(
+        @Query("user_id") userId: String,
+        @Query("page") page: Int
     ): Single<PhotosResponse>
 
-    @GET("?method=flickr.photos.search&format=json&nojsoncallback=1&api_key=$FLICKR_API_KEY")
+    @GET("?method=flickr.photos.getSizes")
+    fun getSizes(
+        @Query("photo_id") photoId: String
+    ): Single<SizesResponse>
+
+    @GET("?method=flickr.photos.getInfo")
+    fun getInfo(
+        @Query("photo_id") photoId: String
+    ): Single<InfoResponse>
+
+    @GET("?method=flickr.galleries.getPhotos&per_page=30")
+    fun getGallery(
+        @Query("gallery_id") galleryId: String,
+        @Query("page") page: Int
+    ): Single<PhotosResponse>
+
+    @GET("?method=flickr.photos.search&per_page=30")
     fun searchImages(
-        @Query("text") query: String
+        @Query("text") query: String,
+        @Query("page") page: Int
     ): Single<PhotosResponse>
 }

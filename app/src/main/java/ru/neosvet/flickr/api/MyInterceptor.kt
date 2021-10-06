@@ -2,15 +2,18 @@ package ru.neosvet.flickr.api
 
 import okhttp3.Interceptor
 import okhttp3.Response
+import ru.neosvet.flickr.FLICKR_API_KEY
 
 object MyInterceptor : Interceptor {
 
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val response = chain.proceed(chain.request())
-        println("Response:")
-        println("Code: " + response.code())
-        println("Body: " + response.body()?.string())
-        return response
-    }
+    private const val CONST_PART = "&format=json&nojsoncallback=1&api_key=$FLICKR_API_KEY"
+
+    override fun intercept(chain: Interceptor.Chain): Response =
+        chain.proceed(
+            chain.request()
+                .newBuilder()
+                .url(chain.request().url.toString() + CONST_PART)
+                .build()
+        )
 
 }

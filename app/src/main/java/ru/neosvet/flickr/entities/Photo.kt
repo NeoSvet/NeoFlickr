@@ -1,38 +1,43 @@
 package ru.neosvet.flickr.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class PhotosResponse(
-    @SerializedName("photos") var photos: Photos,
-    @SerializedName("stat") var stat: String
+    @SerializedName("photos") val photos: Photos?,
+    @SerializedName("stat") val stat: String,
+    @SerializedName("message") val message: String?
 )
 
 data class Photos(
-    @SerializedName("page") var page: Int,
-    @SerializedName("pages") var pages: Int,
-    @SerializedName("perpage") var perpage: Int,
-    @SerializedName("total") var total: Int,
-    @SerializedName("photo") var photo: List<Photo>
+    @SerializedName("page") val page: Int,
+    @SerializedName("pages") val pages: Int,
+    @SerializedName("perpage") val perpage: Int,
+    @SerializedName("total") val total: Int,
+    @SerializedName("photo") val photo: List<Photo>
 )
 
 data class Photo(
-    @SerializedName("id") var id: String,
-    @SerializedName("owner") var owner: String,
-    @SerializedName("secret") var secret: String,
-    @SerializedName("server") var server: String,
-    @SerializedName("farm") var farm: Int,
-    @SerializedName("title") var title: String,
-    @SerializedName("ispublic") var ispublic: Int,
-    @SerializedName("isfriend") var isfriend: Int,
-    @SerializedName("isfamily") var isfamily: Int,
-    @SerializedName("is_primary") var isPrimary: Int,
-    @SerializedName("has_comment") var hasComment: Int
+    @SerializedName("id") val id: String,
+    @SerializedName("owner") val owner: String,
+    @SerializedName("secret") val secret: String,
+    @SerializedName("server") val server: String,
+    @SerializedName("farm") val farm: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("ispublic") val ispublic: Int,
+    @SerializedName("isfriend") val isfriend: Int,
+    @SerializedName("isfamily") val isfamily: Int,
+    @SerializedName("is_primary") val isPrimary: Int,
+    @SerializedName("has_comment") val hasComment: Int
 )
 
+@Entity(tableName = "Photo")
 data class PhotoItem(
-    var id: String,
-    var owner: String,
-    var url: String,
-    var title: String
+    @PrimaryKey val id: String,
+    val owner: String,
+    val urlMini: String,
+    val urlBig: String?,
+    val title: String
 )
 

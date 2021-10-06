@@ -7,8 +7,10 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import ru.neosvet.android4.mvp.model.network.INetworkStatus
 import ru.neosvet.flickr.NeoFlickr
 import ru.neosvet.flickr.scheduler.Schedulers
+import ru.neosvet.flickr.storage.FlickrStorage
 import javax.inject.Singleton
 
 @Singleton
@@ -16,7 +18,8 @@ import javax.inject.Singleton
     modules = [AndroidInjectionModule::class,
         ViewsModule::class,
         ApiModule::class,
-        SourceModule::class]
+        SourceModule::class,
+        UtilsModule::class]
 )
 interface AppComponent : AndroidInjector<NeoFlickr> {
 
@@ -35,11 +38,11 @@ interface AppComponent : AndroidInjector<NeoFlickr> {
         @BindsInstance
         fun withSchedulers(schedulers: Schedulers): Builder
 
-        /*@BindsInstance
-        fun withStorage(storage: GitHubStorage): Builder
+        @BindsInstance
+        fun withStorage(storage: FlickrStorage): Builder
 
         @BindsInstance
-        fun withNetworkStatus(networkStatus: INetworkStatus): Builder*/
+        fun withNetworkStatus(networkStatus: INetworkStatus): Builder
 
         fun build(): AppComponent
 
