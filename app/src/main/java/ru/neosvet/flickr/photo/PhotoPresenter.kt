@@ -58,7 +58,7 @@ class PhotoPresenter(
             image.getInnerImage(it, this)
         }
         process = photo.getUrlBig(photoId)
-            .observeOn(schedulers.main())
+//            .observeOn(schedulers.main())
             .subscribeOn(schedulers.background())
             .subscribe(
                 this::loadUrl,
@@ -67,7 +67,7 @@ class PhotoPresenter(
     }
 
     private fun loadUrl(url: String) {
-        viewState.showLoading()
+//        viewState.showLoading()
         if (url.isNotEmpty())
             image.getOuterImage(url, this)
     }
@@ -80,8 +80,8 @@ class PhotoPresenter(
             iArg = 0
         )
         process = photo.getInfo(photoId)
-            .observeOn(schedulers.main())
-            .subscribeOn(schedulers.background())
+//            .observeOn(schedulers.main())
+//            .subscribeOn(schedulers.background())
             .subscribe(
                 this::parseInfo,
                 viewState::showError
